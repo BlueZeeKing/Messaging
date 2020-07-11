@@ -1,6 +1,4 @@
-const url = "192.168.4.31:3000";
-
-var socket = io.connect('http://' + url);
+var socket = io.connect(window.location.href);
 
 var addNewLetterBtn = document.getElementById("newLetterBack");
 var addNewLetterGUI = document.getElementById("newLetter");
