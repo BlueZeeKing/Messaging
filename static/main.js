@@ -53,8 +53,6 @@ document.getElementById("submit").addEventListener("click", function () {
 
     document.getElementById("detector").addEventListener("click", function () {
         addNewLetterBtn.className = "clicked";
-        to.value = '';
-        body.value = '';
         addNewLetterGUI.style.transform = "translateY(0vh)";
         setTimeout(function () {
             addNewLetterBtn.style.opacity = "0";
@@ -71,10 +69,17 @@ document.getElementById("submit").addEventListener("click", function () {
         socket.emit('send', JSON.stringify({ from: name, to: formatName(to.value), body: body.value}))
         addNewLetterGUI.style.transform = "translateY(87vh)";
         console.log(JSON.stringify({ from: name, to: formatName(to.value), body: body.value }))
+        setTimeout(function () {
+            to.value = '';
+            body.value = '';
+        }, 600)
     });
 
     document.getElementById("close").addEventListener("click", function () {
         document.getElementById('readLetter').style.transform = "translateY(87vh)";
+    });
+    document.getElementById("closeNew").addEventListener("click", function () {
+        document.getElementById('newLetter').style.transform = "translateY(87vh)";
     });
 });
 socket.on('recieve', (dataRaw) => {
