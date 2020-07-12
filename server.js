@@ -16,18 +16,20 @@ app.get('/', function (req, res) {
 })
 
 server = app.listen(port, serverURL, function () {
-    console.log('Example app listening on port ' + port + '!')
+    console.log('URL is: ' + serverURL + '\nPort is: '+port.toString()+'\n\n')
 })
 
 const io = require("socket.io")(server)
 
 io.on('connection', (socket) => {
-    console.log('a user connected')
     let name
 
     socket.on('login', (data) => {
         em.addListener(data, function (data) {
             socket.emit('recieve', data)
+        })
+        em.addListener(data+'status', function (data) {
+            socket.emit('msgStatus', data)
         })
         users.push(data)
         name = data
@@ -37,13 +39,20 @@ io.on('connection', (socket) => {
         let data = JSON.parse(dataRaw)
         if (users.includes(data['to'])) {
             em.emit(data['to'], dataRaw)
+        } else {
+            socket.emit('msgStatus', 404)
         }
-        console.log(dataRaw)
+    })
+
+    socket.on('msgStatus', (dataRaw) => {
+        let data = JSON.parse(dataRaw)
+        em.emit(data['name']+'status', data['status'])
+        console.log('recieved status')
     })
 
     socket.on('disconnect', () => {
-        console.log('user disconnected')
         em.removeAllListeners(name)
+        em.removeAllListeners(name+'status')
         users.splice(users.indexOf(name), 1)
     });
 });

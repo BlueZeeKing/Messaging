@@ -2,11 +2,24 @@ var socket = io.connect(window.location.href);
 
 var addNewLetterBtn = document.getElementById("newLetterBack");
 var addNewLetterGUI = document.getElementById("newLetter");
+var msgStatus = document.getElementById("msgStatus");
 
 var to = document.getElementById("to");
 var body = document.getElementById("body");
 
 var letters = []
+
+function formatName (name) {
+    return name.trim().toLowerCase();
+}
+
+function unformatName(name) {
+    let names = name.split(" ")
+    for (let i = 0; i < names.length; i++) {
+        names[i] = names[i][0].toUpperCase() + names[i].substring(1, names[i].length);
+    }
+    return names.join(' ');
+}
 
 function display() {
     let inner = '';
@@ -36,13 +49,11 @@ function display() {
 
 document.getElementById("submit").addEventListener("click", function () {
     document.getElementById("namePrompt").style.opacity = "0";
-    socket.emit('login', document.getElementById('name').value);
-    var name = document.getElementById('name').value;
+    socket.emit('login', formatName(document.getElementById('name').value));
+    var name = formatName(document.getElementById('name').value);
 
     document.getElementById("detector").addEventListener("click", function () {
         addNewLetterBtn.className = "clicked";
-        to.value = '';
-        body.value = '';
         addNewLetterGUI.style.transform = "translateY(0vh)";
         setTimeout(function () {
             addNewLetterBtn.style.opacity = "0";
@@ -56,28 +67,57 @@ document.getElementById("submit").addEventListener("click", function () {
     });
 
     document.getElementById("send").addEventListener("click", function () {
-        socket.emit('send', JSON.stringify({ from: name, to: to.value, body: body.value}))
+        socket.emit('send', JSON.stringify({ from: name, to: formatName(to.value), body: body.value}))
         addNewLetterGUI.style.transform = "translateY(87vh)";
-        console.log(JSON.stringify({ from: name, to: to.value, body: body.value }))
+        console.log(JSON.stringify({ from: name, to: formatName(to.value), body: body.value }))
+        setTimeout(function () {
+            to.value = '';
+            body.value = '';
+        }, 600)
     });
 
     document.getElementById("close").addEventListener("click", function () {
         document.getElementById('readLetter').style.transform = "translateY(87vh)";
     });
+    document.getElementById("closeNew").addEventListener("click", function () {
+        document.getElementById('newLetter').style.transform = "translateY(87vh)";
+    });
 });
 socket.on('recieve', (dataRaw) => {
-    for (let i = 0; i < letters.length; i++) {
-        document.getElementById('i' + i.toString()).removeEventListener('click', function (i) {
-            document.getElementById('from').innerHTML = 'From: ' + letters[i]['from'];
-            document.getElementById('body').innerHTML = letters[i]['body'];
-            document.getElementById('readLetter').style.transform = "translateY(0vh)";
-        })
-    }
-    if (letters.length >= 10) {
-        letters.splice(9,10)
-    }
     let data = JSON.parse(dataRaw)
-    data['read'] = ' 🔵'
-    letters.unshift(data)
-    display()
+    let status = { name: data['from']}
+    try {
+        for (let i = 0; i < letters.length; i++) {
+            document.getElementById('i' + i.toString()).removeEventListener('click', function (i) {
+                document.getElementById('from').innerHTML = 'From: ' + letters[i]['from'];
+                document.getElementById('body').innerHTML = letters[i]['body'];
+                document.getElementById('readLetter').style.transform = "translateY(0vh)";
+            })
+        }
+        if (letters.length >= 10) {
+            letters.splice(9,10)
+        }
+        data['read'] = ' 🔵'
+        data['from'] = unformatName(data['from'])
+        letters.unshift(data)
+        display()
+        status['status'] = 200
+    } catch {
+        status['status'] = 400
+    }
+    console.log(status)
+    socket.emit('msgStatus', JSON.stringify(status))
+})
+socket.on('msgStatus', (data) => {
+    if (data == 200) {
+        msgStatus.innerHTML = '✅ Delivered'
+    } else if (data == 404) {
+        msgStatus.innerHTML = '❌ User not found'
+    } else {
+        msgStatus.innerHTML = '❌ Unknown Error'
+    }
+    msgStatus.style.opacity = '1';
+    setTimeout(function () {
+        msgStatus.style.opacity = '0';
+    }, 3000)
 })
