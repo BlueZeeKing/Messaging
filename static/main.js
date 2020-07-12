@@ -2,6 +2,7 @@ var socket = io.connect(window.location.href);
 
 var addNewLetterBtn = document.getElementById("newLetterBack");
 var addNewLetterGUI = document.getElementById("newLetter");
+var msgStatus = document.getElementById("msgStatus");
 
 var to = document.getElementById("to");
 var body = document.getElementById("body");
@@ -83,19 +84,40 @@ document.getElementById("submit").addEventListener("click", function () {
     });
 });
 socket.on('recieve', (dataRaw) => {
-    for (let i = 0; i < letters.length; i++) {
-        document.getElementById('i' + i.toString()).removeEventListener('click', function (i) {
-            document.getElementById('from').innerHTML = 'From: ' + letters[i]['from'];
-            document.getElementById('body').innerHTML = letters[i]['body'];
-            document.getElementById('readLetter').style.transform = "translateY(0vh)";
-        })
-    }
-    if (letters.length >= 10) {
-        letters.splice(9,10)
-    }
     let data = JSON.parse(dataRaw)
-    data['read'] = ' 🔵'
-    data['from'] = unformatName(data['from'])
-    letters.unshift(data)
-    display()
+    let status = { name: data['from']}
+    try {
+        for (let i = 0; i < letters.length; i++) {
+            document.getElementById('i' + i.toString()).removeEventListener('click', function (i) {
+                document.getElementById('from').innerHTML = 'From: ' + letters[i]['from'];
+                document.getElementById('body').innerHTML = letters[i]['body'];
+                document.getElementById('readLetter').style.transform = "translateY(0vh)";
+            })
+        }
+        if (letters.length >= 10) {
+            letters.splice(9,10)
+        }
+        data['read'] = ' 🔵'
+        data['from'] = unformatName(data['from'])
+        letters.unshift(data)
+        display()
+        status['status'] = 200
+    } catch {
+        status['status'] = 400
+    }
+    console.log(status)
+    socket.emit('msgStatus', JSON.stringify(status))
+})
+socket.on('msgStatus', (data) => {
+    if (data == 200) {
+        msgStatus.innerHTML = '✅ Delivered'
+    } else if (data == 404) {
+        msgStatus.innerHTML = '❌ User not found'
+    } else {
+        msgStatus.innerHTML = '❌ Unknown Error'
+    }
+    msgStatus.style.opacity = '1';
+    setTimeout(function () {
+        msgStatus.style.opacity = '0';
+    }, 3000)
 })
