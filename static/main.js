@@ -1,5 +1,7 @@
 var socket = io.connect(window.location.href);
 
+var currentStatus = 0;
+
 var addNewLetterBtn = document.getElementById("newLetterBack");
 var addNewLetterGUI = document.getElementById("newLetter");
 var msgStatus = document.getElementById("msgStatus");
@@ -67,9 +69,14 @@ document.getElementById("submit").addEventListener("click", function () {
     });
 
     document.getElementById("send").addEventListener("click", function () {
-        socket.emit('send', JSON.stringify({ from: name, to: formatName(to.value), body: body.value}))
+        console.log('send')
+        let names = to.value.replace(', ', ',').split(',')
+        for (let i = 0; i < names.length; i++) {
+            names[i] = formatName(names[i])
+        }
+        socket.emit('send', JSON.stringify({ from: name, to: names, body: body.value }))
         addNewLetterGUI.style.transform = "translateY(87vh)";
-        console.log(JSON.stringify({ from: name, to: formatName(to.value), body: body.value }))
+        console.log(JSON.stringify({ from: name, to: names, body: body.value }))
         setTimeout(function () {
             to.value = '';
             body.value = '';
@@ -84,6 +91,7 @@ document.getElementById("submit").addEventListener("click", function () {
     });
 });
 socket.on('recieve', (dataRaw) => {
+    console.log('recieved')
     let data = JSON.parse(dataRaw)
     let status = { name: data['from']}
     try {
@@ -105,19 +113,24 @@ socket.on('recieve', (dataRaw) => {
     } catch {
         status['status'] = 400
     }
-    console.log(status)
     socket.emit('msgStatus', JSON.stringify(status))
 })
 socket.on('msgStatus', (data) => {
-    if (data == 200) {
-        msgStatus.innerHTML = '✅ Delivered'
-    } else if (data == 404) {
-        msgStatus.innerHTML = '❌ User not found'
-    } else {
-        msgStatus.innerHTML = '❌ Unknown Error'
+    if (currentStatus != 400 && currentStatus != 404) {
+        if (data == 200) {
+            msgStatus.innerHTML = '✅ Delivered'
+            currentStatus = 200
+        } else if (data == 404) {
+            msgStatus.innerHTML = '❌ User not found'
+            currentStatus = 404;
+        } else {
+            msgStatus.innerHTML = '❌ Unknown Error'
+            currentStatus = 400;
+        }
+        msgStatus.style.opacity = '1';
+        setTimeout(function () {
+            msgStatus.style.opacity = '0';
+            currentStatus = 0;
+        }, 3000)
     }
-    msgStatus.style.opacity = '1';
-    setTimeout(function () {
-        msgStatus.style.opacity = '0';
-    }, 3000)
 })
