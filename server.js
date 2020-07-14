@@ -37,17 +37,19 @@ io.on('connection', (socket) => {
 
     socket.on('send', (dataRaw) => {
         let data = JSON.parse(dataRaw)
-        if (users.includes(data['to'])) {
-            em.emit(data['to'], dataRaw)
-        } else {
-            socket.emit('msgStatus', 404)
+        for (let i = 0; i < data['to'].length; i++) {
+            dataNew = JSON.stringify({from: data['from'],  body: data['body']})
+            if (users.includes(data['to'][i])) {
+                em.emit(data['to'][i], dataNew)
+            } else {
+                socket.emit('msgStatus', 404)
+            }
         }
     })
 
     socket.on('msgStatus', (dataRaw) => {
         let data = JSON.parse(dataRaw)
         em.emit(data['name']+'status', data['status'])
-        console.log('recieved status')
     })
 
     socket.on('disconnect', () => {
