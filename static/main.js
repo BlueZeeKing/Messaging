@@ -94,8 +94,8 @@ socket.on('recieve', (dataRaw) => {
                 document.getElementById('readLetter').style.transform = "translateY(0vh)";
             })
         }
-        if (letters.length >= 10) {
-            letters.splice(9,10)
+        if (letters.length >= 15) {
+            letters.splice(14,10)
         }
         data['read'] = ' 🔵'
         data['from'] = unformatName(data['from'])
