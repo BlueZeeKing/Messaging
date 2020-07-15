@@ -38,9 +38,10 @@ io.on('connection', (socket) => {
     })
 
     socket.on('send', (dataRaw) => {
+        console.log(users)
         let data = JSON.parse(dataRaw)
         for (let i = 0; i < data['to'].length; i++) {
-            dataNew = JSON.stringify({from: data['from'],  body: data['body']})
+            dataNew = JSON.stringify({to: data['to'], index: data['index'], from: data['from'],  body: data['body']})
             if (users.includes(data['to'][i])) {
                 em.emit(data['to'][i], dataNew)
             } else {
@@ -60,6 +61,7 @@ io.on('connection', (socket) => {
     })
 
     socket.on('disconnect', () => {
+        console.log(users)
         em.removeAllListeners(name)
         em.removeAllListeners(name+'status')
         users.splice(users.indexOf(name), 1)
