@@ -172,3 +172,23 @@ hr {
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+#reply {
+    float: right;
+    font-size: 25px;
+    font-family: 'MuseoModerno', cursive;
+    font-weight: 600;
+}
+#replyMsg {
+    float: right;
+    margin-right: 10px;
+    font-size: 20px;
+    font-family: 'MuseoModerno', cursive;
+    font-weight: 400;
+    width: 50%;
+}
+#close {
+    float: left;
+    font-size: 25px;
+    font-family: 'MuseoModerno', cursive;
+    font-weight: 600;
+}

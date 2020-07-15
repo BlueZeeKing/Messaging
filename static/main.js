@@ -10,6 +10,8 @@ var to = document.getElementById("to");
 var body = document.getElementById("body");
 
 var letters = []
+var indexs = []
+var open = null
 
 function formatName (name) {
     return name.trim().toLowerCase();
@@ -40,7 +42,20 @@ function display() {
         document.getElementById('i' + i.toString()).addEventListener('click', function (e) {
             i = e['srcElement'].id.slice(1)
             document.getElementById('from').innerHTML = 'From: ' + letters[i]['from'];
-            document.getElementById('bodyR').innerHTML = letters[i]['body'];
+            open = letters[i]['index']
+
+            let inner = '';
+            for (let i2 = 0; i2 < letters[i]['body'].length; i2++) {
+                msg = letters[i]['body'][i2].split('|');
+                if (msg[0] == name) {
+                    inner = inner + '<p class="msg me">' + msg[1] + '</p>'
+                } else {
+                    inner = inner + '<p class="msg other">' + msg[1] + '</p>'
+                }
+                
+            }
+
+            document.getElementById('bodyR').innerHTML = inner;
             console.log(letters[i])
             document.getElementById('readLetter').style.transform = "translateY(0vh)";
             letters[i]['read'] = ''
@@ -69,22 +84,25 @@ document.getElementById("submit").addEventListener("click", function () {
     });
 
     document.getElementById("send").addEventListener("click", function () {
-        console.log('send')
-        let names = to.value.replace(', ', ',').split(',')
-        for (let i = 0; i < names.length; i++) {
-            names[i] = formatName(names[i])
-        }
-        socket.emit('send', JSON.stringify({ from: name, to: names, body: body.value }))
-        addNewLetterGUI.style.transform = "translateY(87vh)";
-        console.log(JSON.stringify({ from: name, to: names, body: body.value }))
-        setTimeout(function () {
-            to.value = '';
-            body.value = '';
-        }, 600)
+        socket.emit('index')
     });
+
+    document.getElementById('reply').addEventListener('click', function () {
+        let data;
+        for (let i = 0; i < letters.length; i++) {
+            if (letters[i]['index'] == open) {
+                data = letters[i];
+            }
+        }
+        delete data['read'];
+        data['from'] = formatName(data['from'])
+        data['body'].push(name + '|' + document.getElementById('replyMsg').value)
+        socket.emit('send', JSON.stringify(data))
+    })
 
     document.getElementById("close").addEventListener("click", function () {
         document.getElementById('readLetter').style.transform = "translateY(87vh)";
+        open = null;
     });
     document.getElementById("closeNew").addEventListener("click", function () {
         document.getElementById('newLetter').style.transform = "translateY(87vh)";
@@ -92,22 +110,46 @@ document.getElementById("submit").addEventListener("click", function () {
 });
 socket.on('recieve', (dataRaw) => {
     console.log('recieved')
+    for (let i = 0; i < letters.length; i++) {
+        document.getElementById('i' + i.toString()).removeEventListener('click', function (e) {
+            i = e['srcElement'].id.slice(1)
+            document.getElementById('from').innerHTML = 'From: ' + letters[i]['from'];
+
+            let inner = '';
+            for (let i2 = 0; i2 < letters[i2]['body'].length; i2++) {
+                msg = letters[i2]['body'].split('|');
+                if (msg[0] == name) {
+                    inner = inner + '<p class="msg me">' + msg[1] + '</p>'
+                } else {
+                    inner = inner + '<p class="msg other">' + msg[1] + '</p>'
+                }
+
+            }
+
+            document.getElementById('bodyR').innerHTML = inner;
+            console.log(letters[i])
+            document.getElementById('readLetter').style.transform = "translateY(0vh)";
+            letters[i]['read'] = ''
+            display()
+        })
+    }
     let data = JSON.parse(dataRaw)
     let status = { name: data['from']}
+    data['read'] = ' 🔵'
+    data['from'] = unformatName(data['from'])
     try {
-        for (let i = 0; i < letters.length; i++) {
-            document.getElementById('i' + i.toString()).removeEventListener('click', function (i) {
-                document.getElementById('from').innerHTML = 'From: ' + letters[i]['from'];
-                document.getElementById('body').innerHTML = letters[i]['body'];
-                document.getElementById('readLetter').style.transform = "translateY(0vh)";
-            })
+        if (indexs.includes(data['index'])) {
+            if (letters.length >= 15) {
+                letters.splice(14,10)
+            }
+            letters.unshift(data)
+        } else {
+            for (let i = 0; i < letters.length; i++) {
+                if (letters[i]['index'] == data['index']) {
+                    letters[i] = data;
+                }
+            }
         }
-        if (letters.length >= 15) {
-            letters.splice(14,10)
-        }
-        data['read'] = ' 🔵'
-        data['from'] = unformatName(data['from'])
-        letters.unshift(data)
         display()
         status['status'] = 200
     } catch {
@@ -115,6 +157,21 @@ socket.on('recieve', (dataRaw) => {
     }
     socket.emit('msgStatus', JSON.stringify(status))
 })
+
+socket.on('index', (data) => {
+    console.log('send')
+    let names = to.value.replace(', ', ',').split(',')
+    for (let i = 0; i < names.length; i++) {
+        names[i] = formatName(names[i])
+    }
+    socket.emit('send', JSON.stringify({ index: data, from: name, to: names, body: [name + '|' + body.value] }))
+    addNewLetterGUI.style.transform = "translateY(87vh)";
+    setTimeout(function () {
+        to.value = '';
+        body.value = '';
+    }, 600)
+})
+
 socket.on('msgStatus', (data) => {
     if (currentStatus != 400 && currentStatus != 404) {
         if (data == 200) {

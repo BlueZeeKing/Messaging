@@ -2,6 +2,8 @@ const express = require('express')
 const app = express()
 var events = require('events');
 
+var index = 0;
+
 var serverURL = "0.0.0.0"
 var port = 3000
 
@@ -50,6 +52,11 @@ io.on('connection', (socket) => {
     socket.on('msgStatus', (dataRaw) => {
         let data = JSON.parse(dataRaw)
         em.emit(data['name']+'status', data['status'])
+    })
+
+    socket.on('index', (data) => {
+        socket.emit('index', index)
+        index++;
     })
 
     socket.on('disconnect', () => {
