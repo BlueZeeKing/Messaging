@@ -194,9 +194,11 @@ hr {
 }
 .me {
     float: right;
+    margin: 0;
 }
 .other {
     float: left;
+    margin: 0;
 }
 .container {
     height: 32px;
