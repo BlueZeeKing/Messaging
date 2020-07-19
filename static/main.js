@@ -89,6 +89,7 @@ document.getElementById("submit").addEventListener("click", function () {
 
     document.getElementById("close").addEventListener("click", function () { // if the close button is clicked move the read letter gui down
         document.getElementById('readLetter').style.transform = "translateY(87vh)";
+        open = null;
     });
 
     document.getElementById("closeNew").addEventListener("click", function () { // if the close button is clicked move the new letter gui down

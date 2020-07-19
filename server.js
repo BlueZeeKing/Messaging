@@ -58,6 +58,7 @@ io.on('connection', (socket) => { // when a user connects
     })
 
     socket.on('disconnect', () => {
+        console.log(users)
         em.removeAllListeners(name)
         em.removeAllListeners(name+'status')
         users.splice(users.indexOf(name), 1)
