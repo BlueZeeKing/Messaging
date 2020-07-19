@@ -22,7 +22,7 @@ function unformatName(name) { // craee a function that capitalizes the first let
     return names.join(' ');
 }
 
-function clicked (e) {
+function clicked (e) { // make a function that handles when a letter is opened
     i = e['srcElement'].id.slice(1) // if it has get the index of the letter and display who the letter is from
     let letter = letters[i]
 
@@ -64,12 +64,12 @@ function display() { // create a function to display letters
     }
 }
 
-document.getElementById("submit").addEventListener("click", function () {
-    document.getElementById("namePrompt").style.opacity = "0";
+document.getElementById("submit").addEventListener("click", function () { // when you submit your name
+    document.getElementById("namePrompt").style.opacity = "0"; // make the prompt disappear send the login message to the server and set the name variable
     socket.emit('login', formatName(document.getElementById('name').value));
     name = formatName(document.getElementById('name').value);
 
-    document.getElementById("detector").addEventListener("click", function () { // make the button pretty and make the make a new letter gui pop up
+    document.getElementById("detector").addEventListener("click", function () { // when the new letter button is clicked make the button pretty and make the make a new letter gui pop up
         addNewLetterBtn.className = "clicked";
         addNewLetterGUI.style.transform = "translateY(0vh)";
         setTimeout(function () {
@@ -126,11 +126,7 @@ socket.on('recieve', (dataRaw) => { // when a message is recieved
     let status = { name: data['from']}
     try { // use try to catch errors
         for (let i = 0; i < letters.length; i++) { // for each letter remove the event listener
-            document.getElementById('i' + i.toString()).removeEventListener('click', function (i) {
-                document.getElementById('from').innerHTML = 'From: ' + letters[i]['from'];
-                document.getElementById('body').innerHTML = letters[i]['body'];
-                document.getElementById('readLetter').style.transform = "translateY(0vh)";
-            })
+            document.getElementById('i' + i.toString()).removeEventListener('click', clicked)
         }
 
         data['read'] = ' 🔵' // set the read component of the data to a blue circle to represeent it is not read

@@ -4,6 +4,7 @@ body {
     overflow-y: scroll;
     font-family: 'MuseoModerno', cursive;
 }
+
 #newLetterBtn {
     background-color: rgb(97, 172, 147);
     position: fixed;
@@ -15,6 +16,7 @@ body {
     z-index: 0;
     transform: rotate(35deg);
 }
+
 #newLetterBack {
     background-color: aquamarine;
     width: 100px;
@@ -24,6 +26,7 @@ body {
     z-index: -2;
     position: absolute;
 }
+
 #detector {
     position: fixed;
     width: 100px;
@@ -31,12 +34,15 @@ body {
     border-radius: 50%;
     z-index: 7;
 }
+
 .clicked {
     clip-path: circle(100%);
 }
+
 .notClicked {
     clip-path: circle(0%);
 }
+
 .pencil {
     width: 18px;
     height: 80px;
@@ -47,6 +53,7 @@ body {
     clip-path: polygon(0% 0%, 100% 0%, 100% 80%, 50% 100%, 0% 80%);
     z-index: 5;
 }
+
 #newLetter {
     width: 80vw;
     height: 110vh;
@@ -62,15 +69,18 @@ body {
     transition: all 0.75s;
     transform: translateY(87vh);
 }
+
 hr {
     margin: 15px;
 }
+
 #newLetter input {
     margin-bottom: 10px;
     font-family: 'MuseoModerno', cursive;
     font-size: 25px;
     font-weight: 600;
 }
+
 #newLetter textarea {
     margin-top: 10px;
     font-family: 'MuseoModerno', cursive;
@@ -79,12 +89,14 @@ hr {
     font-size: 20px;
     resize: none;
 }
+
 #newLetter button {
     font-family: 'MuseoModerno', cursive;
     font-size: 25px;
     font-weight: 600;
     margin: 10px;
 }
+
 #namePrompt {
     background-color: white;
     width: 50%;
@@ -101,20 +113,24 @@ hr {
     border: 5px solid black;
     transition: opacity 0.5s;
 }
+
 #namePrompt div {
     height: 20px;
 }
+
 #namePrompt input {
     font-size: 40px;
     font-family: 'MuseoModerno', cursive;
     font-weight: 600;
     width: 80%;
 }
+
 #namePrompt button {
     font-size: 40px;
     font-family: 'MuseoModerno', cursive;
     font-weight: 600;
 }
+
 #readLetter {
     width: 80vw;
     height: 110vh;
@@ -130,23 +146,27 @@ hr {
     transition: all 0.75s;
     transform: translateY(87vh);
 }
+
 #bodyR {
     font-weight: 400;
     font-size: 20px;
     width: calc(100%-40px);
     word-wrap: break-word;
 }
+
 #letters p {
     font-weight: 600;
     font-size: 25px;
     margin: 17px;
 }
+
 #closeNew {
     margin: 0;
     position: absolute;
     top: 10px;
     right: 10px;
 }
+
 #msgStatus {
     transition: opacity 0.5s;
     opacity: 0;
@@ -172,12 +192,14 @@ hr {
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
 #reply {
     float: right;
     font-size: 25px;
     font-family: 'MuseoModerno', cursive;
     font-weight: 600;
 }
+
 #replyMsg {
     float: right;
     margin-right: 10px;
@@ -186,25 +208,30 @@ hr {
     font-weight: 400;
     width: 50%;
 }
+
 #close {
     float: left;
     font-size: 25px;
     font-family: 'MuseoModerno', cursive;
     font-weight: 600;
 }
+
 .me {
     float: right;
     margin: 0;
 }
+
 .other {
     float: left;
     margin: 0;
 }
+
 .container {
     height: 32px;
     margin-top: 4px;
     margin-bottom: 4px;
 }
+
 .msg {
     margin: 0;
 }

@@ -47,17 +47,17 @@ io.on('connection', (socket) => { // when a user connects
         }
     })
 
-    socket.on('msgStatus', (dataRaw) => { // when a message status alert is recieved 
+    socket.on('msgStatus', (dataRaw) => { // when a message status alert is recieved forward that alert to where it should go
         let data = JSON.parse(dataRaw)
         em.emit(data['name']+'status', data['status'])
     })
 
-    socket.on('index', (data) => {
+    socket.on('index', (data) => { // when an index message is recieved send back a message with the current index than add one to the index
         socket.emit('index', index)
         index++
     })
 
-    socket.on('disconnect', () => {
+    socket.on('disconnect', () => { // when a user diconnects remove the event listeners assoicted with them and remove them from the users list
         console.log(users)
         em.removeAllListeners(name)
         em.removeAllListeners(name+'status')
