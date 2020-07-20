@@ -177,21 +177,21 @@ socket.on('recieve', (dataRaw) => { // when a message is recieved
 })
 
 socket.on('reply', (dataRaw) => {
-    let data = JSON.parse(dataRaw)
-    let status = {name: data['from']}
+    let data = JSON.parse(dataRaw) // get the data sent
+    let status = {name: data['from']} // create the status var
     
     try {
-        for (let i = 0; i < letters.length; i++) {
+        for (let i = 0; i < letters.length; i++) { // find the correct letter
             if (data['index'] == letters[i]['index'])  {
                 let letter = letters[i]
 
-                letter['body'].push(data['from'] + '|' + data['reply'])
+                letter['body'].push(data['from'] + '|' + data['reply']) // add the reply to the letter
 
-                if (open == data['index']) {
+                if (open == data['index']) { // if the letter is open display it
                     console.log(open)
                     letter['read'] = ''
                     document.getElementById('i'+i).innerHTML = letter['display']+letter['read']
-                    let inner = '' // and display all the messages in the body of the message
+                    let inner = ''
                     for (let i = 0; i < letter['body'].length; i++) {
                         let msg = letter['body'][i].split('|');
                         if (msg[0] == name) {
@@ -201,27 +201,27 @@ socket.on('reply', (dataRaw) => {
                         }
                     }
                     readBody.innerHTML = inner;
-                } else {
+                    readBody.scroll({
+                        top: readBody.scrollHeight - readBody.clientHeight,
+                        left: 0,
+                        behavior: 'smooth'
+                    }); // scroll the body
+                } else { // otherwise set the read var to un read
                     letter['read'] = ' 🔵'
-                    document.getElementById('i' + i).innerHTML = letter['display'] + letter['read']
+                    document.getElementById('i' + i).innerHTML = letter['display'] + letter['read'] // show the change
                 }
                 console.log(letter['display'] + letter['read'])
-                letters[i] = letter
+                letters[i] = letter // update the new letter
             }
         }
 
-        status['status'] = 200
+        status['status'] = 200 // set the status to good
     } catch (e) {
         console.log(e)
-        status['status'] = 400
+        status['status'] = 400 // if it failed set the status to bad
     }
 
     socket.emit('msgStatus', JSON.stringify(status)) // send a message to the server saying the status
-    readBody.scroll({
-        top: readBody.scrollHeight - readBody.clientHeight,
-        left: 0,
-        behavior: 'smooth'
-    });
 })
 
 socket.on('msgStatus', (data) => { // if a message status message is received
