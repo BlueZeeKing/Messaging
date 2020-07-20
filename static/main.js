@@ -5,10 +5,12 @@ var addNewLetterGUI = document.getElementById("newLetter");
 var msgStatus = document.getElementById("msgStatus");
 var to = document.getElementById("to");
 var body = document.getElementById("body");
+var readBody = document.getElementById('bodyR')
 
 var currentStatus = 0; // set all the variables
 var letters = []
 var name;
+var open = false;
 
 function formatName (name) { // create a function that removes white space from names and removes capitalization
     return name.trim().toLowerCase();
@@ -25,6 +27,7 @@ function unformatName(name) { // craee a function that capitalizes the first let
 function clicked (e) { // make a function that handles when a letter is opened
     i = e['srcElement'].id.slice(1) // if it has get the index of the letter and display who the letter is from
     let letter = letters[i]
+    open = letter['index']
 
     document.getElementById('from').innerHTML = letters[i]['display'];
 
@@ -32,19 +35,19 @@ function clicked (e) { // make a function that handles when a letter is opened
     for (let i = 0; i < letter['body'].length; i++) {
         let msg = letter['body'][i].split('|');
         if (msg[0] == name) {
-            inner = inner + '<div class=\'container\'><p class=\'me\'>' + msg[1] + '</p></div>'
+            inner = inner + '<div class=\'containerN\'> <p class=\'name me\'>' + unformatName(msg[0]) + '</p> </div> <div class=\'container\'> <p class=\'me\'>' + msg[1] + '</p> </div>'
         } else {
-            inner = inner + '<div class=\'container\'><p class=\'other\'>' + msg[1] + '</p></div>'
+            inner = inner + '<div class=\'containerN\'> <p class=\'name other\'>' + unformatName(msg[0]) + '</p> </div> <div class=\'container\'> <p class=\'other\'>' + msg[1] + '</p></div>'
         }
     }
-    document.getElementById('bodyR').innerHTML = inner;
+    readBody.innerHTML = inner;
+    console.log(inner)
 
     console.log(letter) // then move the divider that holds all the text up
     document.getElementById('readLetter').style.transform = "translateY(0vh)";
     letter['read'] = '' // set the read to zero
     letters[i] = letter
     e.srcElement.innerHTML = letter['display'] + letter['read']
-    console.log(letters)
 }
 
 function display() { // create a function to display letters
@@ -89,12 +92,28 @@ document.getElementById("submit").addEventListener("click", function () { // whe
 
     document.getElementById("close").addEventListener("click", function () { // if the close button is clicked move the read letter gui down
         document.getElementById('readLetter').style.transform = "translateY(87vh)";
-        open = null;
+        open = false;
     });
 
     document.getElementById("closeNew").addEventListener("click", function () { // if the close button is clicked move the new letter gui down
         document.getElementById('newLetter').style.transform = "translateY(87vh)";
     });
+
+    document.getElementById('reply').addEventListener('click', function () { // if the reply button is clicked
+        let letter; // get the open letter
+        for (let i = 0; i < letters.length; i++) {
+            if (letters[i]['index'] == open) {
+                letter = letters[i]
+            }
+        }
+
+        let data = {users: letter['to'].concat(letter['from']), from: name, index: letter['index'], reply: document.getElementById('replyMsg').value} // create the data 
+
+        console.log(letter)
+        document.getElementById('replyMsg').value = '' // reset the input
+
+        socket.emit('reply', JSON.stringify(data)) // send the data
+    })
 });
 
 socket.on('index', (data) => { // when the server responds to the index message 
@@ -109,7 +128,13 @@ socket.on('index', (data) => { // when the server responds to the index message
         letters.splice(14, 10)
     }
     letters.unshift(data) // add the message data to the letters
+    console.log(data)
 
+    for (let i = 0; i < letters.length; i++) { // for each letter remove the event listener
+        try {
+            document.getElementById('i' + i.toString()).removeEventListener('click', clicked)
+        } catch {}
+    }
     display() // display all the messages
 
     socket.emit('send', JSON.stringify(data)) // send the letter to the server
@@ -149,6 +174,54 @@ socket.on('recieve', (dataRaw) => { // when a message is recieved
     }
 
     socket.emit('msgStatus', JSON.stringify(status)) // send a message to the server saying the status
+})
+
+socket.on('reply', (dataRaw) => {
+    let data = JSON.parse(dataRaw)
+    let status = {name: data['from']}
+    
+    try {
+        for (let i = 0; i < letters.length; i++) {
+            if (data['index'] == letters[i]['index'])  {
+                let letter = letters[i]
+
+                letter['body'].push(data['from'] + '|' + data['reply'])
+
+                if (open == data['index']) {
+                    console.log(open)
+                    letter['read'] = ''
+                    document.getElementById('i'+i).innerHTML = letter['display']+letter['read']
+                    let inner = '' // and display all the messages in the body of the message
+                    for (let i = 0; i < letter['body'].length; i++) {
+                        let msg = letter['body'][i].split('|');
+                        if (msg[0] == name) {
+                            inner = inner + '<div class=\'containerN\'> <p class=\'name me\'>' + unformatName(msg[0]) + '</p> </div> <div class=\'container\'> <p class=\'me\'>' + msg[1] + '</p> </div>'
+                        } else {
+                            inner = inner + '<div class=\'containerN\'> <p class=\'name other\'>' + unformatName(msg[0]) + '</p> </div> <div class=\'container\'> <p class=\'other\'>' + msg[1] + '</p></div>'
+                        }
+                    }
+                    readBody.innerHTML = inner;
+                } else {
+                    letter['read'] = ' 🔵'
+                    document.getElementById('i' + i).innerHTML = letter['display'] + letter['read']
+                }
+                console.log(letter['display'] + letter['read'])
+                letters[i] = letter
+            }
+        }
+
+        status['status'] = 200
+    } catch (e) {
+        console.log(e)
+        status['status'] = 400
+    }
+
+    socket.emit('msgStatus', JSON.stringify(status)) // send a message to the server saying the status
+    readBody.scroll({
+        top: readBody.scrollHeight - readBody.clientHeight,
+        left: 0,
+        behavior: 'smooth'
+    });
 })
 
 socket.on('msgStatus', (data) => { // if a message status message is received

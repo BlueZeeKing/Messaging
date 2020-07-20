@@ -152,6 +152,14 @@ hr {
     font-size: 20px;
     width: calc(100%-40px);
     word-wrap: break-word;
+    max-height: 50%;
+    overflow-y: scroll;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+#bodyR::-webkit-scrollbar {
+  display: none;
 }
 
 #letters p {
@@ -228,10 +236,18 @@ hr {
 
 .container {
     height: 32px;
-    margin-top: 4px;
     margin-bottom: 4px;
 }
 
 .msg {
     margin: 0;
+}
+
+.name {
+    color: gray;
+    font-size: 12px;
+}
+
+.containerN {
+    height: 19px;
 }

@@ -29,8 +29,12 @@ io.on('connection', (socket) => { // when a user connects
         em.addListener(data, function (data) { // create a event listener to recieve messages and message status alerts
             socket.emit('recieve', data)
         })
-        em.addListener(data+'status', function (data) {
+        em.addListener(data + 'status', function (data) {
             socket.emit('msgStatus', data)
+        })
+        em.addListener(data + 'reply', function (data) {
+            socket.emit('reply', data)
+            console.log('reply')
         })
         users.push(data) // add the user to the list of users and set the name variable to the name of the user
         name = data
@@ -55,6 +59,19 @@ io.on('connection', (socket) => { // when a user connects
     socket.on('index', (data) => { // when an index message is recieved send back a message with the current index than add one to the index
         socket.emit('index', index)
         index++
+    })
+
+    socket.on('reply', (dataRaw) => {
+        let data = JSON.parse(dataRaw)
+        console.log(data)
+        
+        for (let i = 0; i < data['users'].length; i++) {
+            if (users.includes(data['users'][i])) {
+                em.emit(data['users'][i] + 'reply', dataRaw)
+            } else {
+                socket.emit('msgStatus', 404)
+            }
+        }
     })
 
     socket.on('disconnect', () => { // when a user diconnects remove the event listeners assoicted with them and remove them from the users list
