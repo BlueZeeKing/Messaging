@@ -9,19 +9,23 @@
     <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
+
     <div id='letters'>
         <p>No letters</p>
     </div>
+
     <div id="newLetterBtn">
         <div id="newLetterBack" class="notClicked"></div>
         <div id="detector"></div>
         <div class="pencil"></div>
     </div>
+
     <div id="namePrompt">
         Name: <input id="name" type="text">
         <div></div>
         <button id="submit">Submit!</button>
     </div>
+
     <div id="newLetter">
         To: <input id="to" type="text">
         <br>
@@ -30,13 +34,16 @@
         <button id="send">Send!</button>
         <p id="closeNew">❌</p>
     </div>
+
     <div id="readLetter">
         <p id="from"></p>
         <hr>
-        <p id="bodyR"></p>
-        <button id="close">Close</button>
+        <div id="bodyR"></div>
+        <button id="close">Close</button><button id='reply'>Reply</button><input name="reply" id='replyMsg'>
     </div>
+
     <p id="msgStatus"></p>
+
     <script src="main.js"></script>
 </body>
 </html>
