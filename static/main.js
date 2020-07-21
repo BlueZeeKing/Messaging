@@ -6,11 +6,25 @@ var msgStatus = document.getElementById("msgStatus");
 var to = document.getElementById("to");
 var body = document.getElementById("body");
 var readBody = document.getElementById('bodyR')
+var lettersObj = document.getElementById('letters')
 
 var currentStatus = 0; // set all the variables
 var letters = []
 var name;
 var open = false;
+
+lettersObj.addEventListener('scroll', function () {
+    console.log(lettersObj.scrollHeight - lettersObj.clientHeight)
+    console.log(lettersObj.scrollTop)
+    if (lettersObj.scrollHeight - lettersObj.clientHeight == lettersObj.scrollTop) {
+        document.documentElement.style.setProperty('--scroll-bottom-radius', '0px')
+    } else if (0 == lettersObj.scrollTop) {
+        document.documentElement.style.setProperty('--scroll-top-radius', '0px')
+    } else {
+        document.documentElement.style.setProperty('--scroll-top-radius', '9px')
+        document.documentElement.style.setProperty('--scroll-bottom-radius', '9px')
+    }
+})
 
 function formatName (name) { // create a function that removes white space from names and removes capitalization
     return name.trim().toLowerCase();
@@ -71,6 +85,9 @@ document.getElementById("submit").addEventListener("click", function () { // whe
     document.getElementById("namePrompt").style.opacity = "0"; // make the prompt disappear send the login message to the server and set the name variable
     socket.emit('login', formatName(document.getElementById('name').value));
     name = formatName(document.getElementById('name').value);
+    setTimeout(function () {
+        document.getElementById("namePrompt").style.transform = "translate(0,100vh)";
+    }, 600)
 
     document.getElementById("detector").addEventListener("click", function () { // when the new letter button is clicked make the button pretty and make the make a new letter gui pop up
         addNewLetterBtn.className = "clicked";
