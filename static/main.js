@@ -37,9 +37,9 @@ function unformatName(name) { // craee a function that capitalizes the first let
 }
 
 function clicked (e) { // make a function that handles when a letter is opened
-    i = e['srcElement'].id.slice(1) // if it has get the index of the letter and display who the letter is from
+    i = e['srcElement'].id.slice(1) // if it has get the id of the letter and display who the letter is from
     let letter = letters[i]
-    open = letter['index']
+    open = letter['id']
 
     document.getElementById('from').innerHTML = letters[i]['display'];
 
@@ -101,8 +101,8 @@ document.getElementById("submit").addEventListener("click", function () { // whe
         }, 800)
     });
 
-    document.getElementById("send").addEventListener("click", function () { // send a message to the server to get the current message index
-        socket.emit('index')
+    document.getElementById("send").addEventListener("click", function () { // send a message to the server to get the current message id
+        socket.emit('id')
     });
 
     document.getElementById("close").addEventListener("click", function () { // if the close button is clicked move the read letter gui down
@@ -117,33 +117,33 @@ document.getElementById("submit").addEventListener("click", function () { // whe
     document.getElementById('reply').addEventListener('click', function () { // if the reply button is clicked
         let letter; // get the open letter
         for (let i = 0; i < letters.length; i++) {
-            if (letters[i]['index'] == open) {
+            if (letters[i]['id'] == open) {
                 letter = letters[i]
             }
         }
 
-        let data = {users: letter['to'].concat(letter['from']), from: name, index: letter['index'], reply: document.getElementById('replyMsg').value} // create the data 
+        let data = {users: letter['to'].concat(letter['from']), from: name, id: letter['id'], reply: document.getElementById('replyMsg').value} // create the data 
 
         console.log(letter)
         document.getElementById('replyMsg').value = '' // reset the input
 
         socket.emit('reply', JSON.stringify(data)) // send the data
+        console.log(JSON.stringify(data))
     })
 });
 
-socket.on('index', (data) => { // when the server responds to the index message 
+socket.on('id', (data) => { // when the server responds to the id message 
     let names = to.value.replace(', ', ',').split(',') // format the names to send to
     for(let i = 0; i < names.length; i++) {
         names[i] = formatName(names[i])
     }
 
-    data = { display: 'To: ' + to.value.replace(',', ', '), from: name, to: names, body: [name+'|'+body.value], read: '' } //  create the message data
+    data = { display: 'To: ' + to.value.replace(',', ', '), from: name, to: names, body: [name+'|'+body.value], read: '', id: data } //  create the message data
 
     if (letters.length >= 15) { // delete a message if there are too many
         letters.splice(14, 10)
     }
     letters.unshift(data) // add the message data to the letters
-    console.log(data)
 
     for (let i = 0; i < letters.length; i++) { // for each letter remove the event listener
         try {
@@ -197,13 +197,13 @@ socket.on('reply', (dataRaw) => {
     
     try {
         for (let i = 0; i < letters.length; i++) { // find the correct letter
-            if (data['index'] == letters[i]['index'])  {
+            console.log(letters[i]['id'], data['id'])
+            if (data['id'] == letters[i]['id'])  {
                 let letter = letters[i]
 
                 letter['body'].push(data['from'] + '|' + data['reply']) // add the reply to the letter
 
-                if (open == data['index']) { // if the letter is open display it
-                    console.log(open)
+                if (open == data['id']) { // if the letter is open display it
                     letter['read'] = ''
                     document.getElementById('i'+i).innerHTML = letter['display']+letter['read']
                     let inner = ''
@@ -225,7 +225,6 @@ socket.on('reply', (dataRaw) => {
                     letter['read'] = ' 🔵'
                     document.getElementById('i' + i).innerHTML = letter['display'] + letter['read'] // show the change
                 }
-                console.log(letter['display'] + letter['read'])
                 letters[i] = letter // update the new letter
             }
         }

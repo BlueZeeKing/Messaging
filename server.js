@@ -6,7 +6,7 @@ var serverURL = "0.0.0.0" // set the server url
 var port = 3000
 
 var users = []; // set all the variables
-var index = 0;
+var id = 0;
 
 app.set('view engine', 'ejs') // set the rendering engine events library and static folder
 app.use(express.static('static'))
@@ -56,9 +56,9 @@ io.on('connection', (socket) => { // when a user connects
         em.emit(data['name']+'status', data['status'])
     })
 
-    socket.on('index', (data) => { // when an index message is recieved send back a message with the current index than add one to the index
-        socket.emit('index', index)
-        index++
+    socket.on('id', (data) => { // when an id message is recieved send back a message with the current id than add one to the id
+        socket.emit('id', id)
+        id++
     })
 
     socket.on('reply', (dataRaw) => {
