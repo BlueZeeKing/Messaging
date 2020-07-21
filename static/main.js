@@ -13,14 +13,12 @@ var letters = []
 var name;
 var open = false;
 
-lettersObj.addEventListener('scroll', function () {
-    console.log(lettersObj.scrollHeight - lettersObj.clientHeight)
-    console.log(lettersObj.scrollTop)
-    if (lettersObj.scrollHeight - lettersObj.clientHeight == lettersObj.scrollTop) {
+lettersObj.addEventListener('scroll', function () { // when the main body is scrolled
+    if (lettersObj.scrollHeight - lettersObj.clientHeight == lettersObj.scrollTop) { // if it is scrolled all the way down remove the rounding at the bottom of the scroll bar
         document.documentElement.style.setProperty('--scroll-bottom-radius', '0px')
-    } else if (0 == lettersObj.scrollTop) {
+    } else if (0 == lettersObj.scrollTop) { // if it is scrolled all the way up remove the rounding at the top of the scroll bar
         document.documentElement.style.setProperty('--scroll-top-radius', '0px')
-    } else {
+    } else { // otherwise keep the rounding
         document.documentElement.style.setProperty('--scroll-top-radius', '9px')
         document.documentElement.style.setProperty('--scroll-bottom-radius', '9px')
     }
