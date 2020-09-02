@@ -1,3 +1,5 @@
+#!/usr/bin/env nodejs
+
 const express = require('express') // import all the modules
 const app = express()
 const events = require('events');
@@ -15,7 +17,7 @@ app.get('/', function (req, res) { // when visiting the site render the main pag
 })
 
 server = app.listen(config.get('app.port'), config.get('app.host'), function () { // start the server
-    console.log('URL is: ' + serverURL + '\nPort is: '+port.toString()+'\n\n')
+    console.log('URL is: ' + config.get('app.host') + '\nPort is: ' + config.get('app.port').toString()+'\n\n')
 })
 
 const io = require("socket.io")(server) // set up socket.io
