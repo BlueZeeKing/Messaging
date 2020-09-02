@@ -3,4 +3,3 @@ package-lock.json
 .DS_Store
 static/.DS_Store
 views/.DS_Store
-config/default.json
