@@ -104,13 +104,14 @@ input {
 
 #newLetter {
     width: 80vw;
-    height: 110vh;
+    height: 87vh;
     background-color: var(--secondary-bg-color);
     position: fixed;
     top: 5vh;
     left: 10vw;
     padding: 20px;
-    border-radius: 15px;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
     z-index: 3;
     font-size: 25px;
     font-weight: var(--bold);
@@ -134,14 +135,16 @@ hr {
 }
 
 #newLetter textarea {
+    box-sizing: border-box;
     margin-top: 10px;
     font-family: var(--font);
     width: 100%;
-    height: calc(95vh - 200px);
+    height: 60%;
     font-size: 20px;
     resize: none;
     color: var(--main-text-color);
     background-color: var(--input-bg-color);
+    padding: 5px;
 }
 
 #newLetter button {
@@ -194,7 +197,7 @@ hr {
 
 #readLetter {
     width: 80vw;
-    height: 110vh;
+    height: 87vh;
     background-color: var(--secondary-bg-color);
     position: fixed;
     top: 13vh;
@@ -207,6 +210,8 @@ hr {
     transition: all 0.75s;
     transform: translateY(87vh);
     box-sizing: border-box;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
 }
 
 #bodyR {
@@ -232,7 +237,7 @@ hr {
 
 #letters {
     overflow-y: scroll;
-    height: 100vh;
+    height: 100%;
 }
 
 #closeNew {
