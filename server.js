@@ -1,9 +1,7 @@
 const express = require('express') // import all the modules
 const app = express()
-var events = require('events');
-
-var serverURL = "0.0.0.0" // set the server url
-var port = 3000
+const events = require('events');
+const config = require('config')
 
 var users = []; // set all the variables
 var id = 0;
@@ -16,7 +14,7 @@ app.get('/', function (req, res) { // when visiting the site render the main pag
     res.render('index')
 })
 
-server = app.listen(port, serverURL, function () { // start the server
+server = app.listen(config.get('app.port'), config.get('app.host'), function () { // start the server
     console.log('URL is: ' + serverURL + '\nPort is: '+port.toString()+'\n\n')
 })
 
