@@ -46,6 +46,13 @@ body {
     color: var(--main-text-color);
 }
 
+button {
+    padding: 5px;
+}
+input {
+    padding: 2px;
+}
+
 #newLetterBtn {
     background-color: var(--new-letter-primary-bg-color);
     position: fixed;
@@ -100,7 +107,7 @@ body {
     height: 110vh;
     background-color: var(--secondary-bg-color);
     position: fixed;
-    top: 13vh;
+    top: 5vh;
     left: 10vw;
     padding: 20px;
     border-radius: 15px;
@@ -108,7 +115,7 @@ body {
     font-size: 25px;
     font-weight: var(--bold);
     transition: all 0.75s;
-    transform: translateY(87vh);
+    transform: translateY(95vh);
     box-sizing: border-box;
 }
 
@@ -123,13 +130,14 @@ hr {
     font-weight: var(--bold);
     color: var(--main-text-color);
     background-color: var(--input-bg-color);
+    width: calc(100% - 80px)
 }
 
 #newLetter textarea {
     margin-top: 10px;
     font-family: var(--font);
     width: 100%;
-    height: 40%;
+    height: calc(95vh - 200px);
     font-size: 20px;
     resize: none;
     color: var(--main-text-color);
@@ -147,13 +155,13 @@ hr {
 
 #namePrompt {
     background-color: var(--secondary-bg-color);
-    width: 50%;
-    height: 50%;
+    width: 74%;
+    height: 74%;
     border-radius: 100px;
     text-align: center;
     padding: 40px;
-    top: 25%;
-    right: 25%;
+    top: 13%;
+    right: 13%;
     position: fixed;
     font-weight: var(--bold);
     font-size: 40px;
@@ -277,7 +285,7 @@ hr {
     font-size: 20px;
     font-family: var(--font);
     font-weight: var(--not-bold);
-    width: 50%;
+    width: calc(80vw - 233px);
     color: var(--main-text-color);
     background-color: var(--input-bg-color);
 }
@@ -316,5 +324,5 @@ hr {
 }
 
 .containerN {
-    height: 19px;
+    height: 20px;
 }

@@ -106,12 +106,12 @@ document.getElementById("submit").addEventListener("click", function () { // whe
     });
 
     document.getElementById("close").addEventListener("click", function () { // if the close button is clicked move the read letter gui down
-        document.getElementById('readLetter').style.transform = "translateY(87vh)";
+        document.getElementById('readLetter').style.transform = "translateY(95vh)";
         open = false;
     });
 
     document.getElementById("closeNew").addEventListener("click", function () { // if the close button is clicked move the new letter gui down
-        document.getElementById('newLetter').style.transform = "translateY(87vh)";
+        document.getElementById('newLetter').style.transform = "translateY(95vh)";
     });
 
     document.getElementById('reply').addEventListener('click', function () { // if the reply button is clicked
@@ -154,7 +154,7 @@ socket.on('id', (data) => { // when the server responds to the id message
 
     socket.emit('send', JSON.stringify(data)) // send the letter to the server
 
-    addNewLetterGUI.style.transform = "translateY(87vh)"; // move the new letter gui down
+    addNewLetterGUI.style.transform = "translateY(95vh)"; // move the new letter gui down
     setTimeout(function () { // erase the inputs after 0.6 seconds
         to.value = '';
         body.value = '';
