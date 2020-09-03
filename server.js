@@ -1,12 +1,12 @@
+#!/usr/bin/env nodejs
+
 const express = require('express') // import all the modules
 const app = express()
-var events = require('events');
-
-var serverURL = "0.0.0.0" // set the server url
-var port = 3000
+const events = require('events');
+const config = require('config')
 
 var users = []; // set all the variables
-var index = 0;
+var id = 0;
 
 app.set('view engine', 'ejs') // set the rendering engine events library and static folder
 app.use(express.static('static'))
@@ -16,8 +16,8 @@ app.get('/', function (req, res) { // when visiting the site render the main pag
     res.render('index')
 })
 
-server = app.listen(port, serverURL, function () { // start the server
-    console.log('URL is: ' + serverURL + '\nPort is: '+port.toString()+'\n\n')
+server = app.listen(config.get('app.port'), config.get('app.host'), function () { // start the server
+    console.log('URL is: ' + config.get('app.host') + '\nPort is: ' + config.get('app.port').toString()+'\n\n')
 })
 
 const io = require("socket.io")(server) // set up socket.io
@@ -56,9 +56,9 @@ io.on('connection', (socket) => { // when a user connects
         em.emit(data['name']+'status', data['status'])
     })
 
-    socket.on('index', (data) => { // when an index message is recieved send back a message with the current index than add one to the index
-        socket.emit('index', index)
-        index++
+    socket.on('id', (data) => { // when an id message is recieved send back a message with the current id than add one to the id
+        socket.emit('id', id)
+        id++
     })
 
     socket.on('reply', (dataRaw) => {
@@ -75,9 +75,9 @@ io.on('connection', (socket) => { // when a user connects
     })
 
     socket.on('disconnect', () => { // when a user diconnects remove the event listeners assoicted with them and remove them from the users list
-        console.log(users)
         em.removeAllListeners(name)
         em.removeAllListeners(name+'status')
         users.splice(users.indexOf(name), 1)
+        console.log(users)
     });
 });

@@ -1,5 +1,3 @@
-var socket = io.connect(window.location.href); // start the socket connection
-
 var addNewLetterBtn = document.getElementById("newLetterBack"); // get the dom of some html elements
 var addNewLetterGUI = document.getElementById("newLetter");
 var msgStatus = document.getElementById("msgStatus");
@@ -13,14 +11,12 @@ var letters = []
 var name;
 var open = false;
 
-lettersObj.addEventListener('scroll', function () {
-    console.log(lettersObj.scrollHeight - lettersObj.clientHeight)
-    console.log(lettersObj.scrollTop)
-    if (lettersObj.scrollHeight - lettersObj.clientHeight == lettersObj.scrollTop) {
+lettersObj.addEventListener('scroll', function () { // when the main body is scrolled
+    if (lettersObj.scrollHeight - lettersObj.clientHeight == lettersObj.scrollTop) { // if it is scrolled all the way down remove the rounding at the bottom of the scroll bar
         document.documentElement.style.setProperty('--scroll-bottom-radius', '0px')
-    } else if (0 == lettersObj.scrollTop) {
+    } else if (0 == lettersObj.scrollTop) { // if it is scrolled all the way up remove the rounding at the top of the scroll bar
         document.documentElement.style.setProperty('--scroll-top-radius', '0px')
-    } else {
+    } else { // otherwise keep the rounding
         document.documentElement.style.setProperty('--scroll-top-radius', '9px')
         document.documentElement.style.setProperty('--scroll-bottom-radius', '9px')
     }
@@ -39,9 +35,9 @@ function unformatName(name) { // craee a function that capitalizes the first let
 }
 
 function clicked (e) { // make a function that handles when a letter is opened
-    i = e['srcElement'].id.slice(1) // if it has get the index of the letter and display who the letter is from
+    i = e['srcElement'].id.slice(1) // if it has get the id of the letter and display who the letter is from
     let letter = letters[i]
-    open = letter['index']
+    open = letter['id']
 
     document.getElementById('from').innerHTML = letters[i]['display'];
 
@@ -82,6 +78,7 @@ function display() { // create a function to display letters
 }
 
 document.getElementById("submit").addEventListener("click", function () { // when you submit your name
+    var socket = io.connect(window.location.href); // start the socket connection
     document.getElementById("namePrompt").style.opacity = "0"; // make the prompt disappear send the login message to the server and set the name variable
     socket.emit('login', formatName(document.getElementById('name').value));
     name = formatName(document.getElementById('name').value);
@@ -103,160 +100,160 @@ document.getElementById("submit").addEventListener("click", function () { // whe
         }, 800)
     });
 
-    document.getElementById("send").addEventListener("click", function () { // send a message to the server to get the current message index
-        socket.emit('index')
+    document.getElementById("send").addEventListener("click", function () { // send a message to the server to get the current message id
+        socket.emit('id')
     });
 
     document.getElementById("close").addEventListener("click", function () { // if the close button is clicked move the read letter gui down
-        document.getElementById('readLetter').style.transform = "translateY(87vh)";
+        document.getElementById('readLetter').style.transform = "translateY(95vh)";
         open = false;
     });
 
     document.getElementById("closeNew").addEventListener("click", function () { // if the close button is clicked move the new letter gui down
-        document.getElementById('newLetter').style.transform = "translateY(87vh)";
+        document.getElementById('newLetter').style.transform = "translateY(95vh)";
     });
 
     document.getElementById('reply').addEventListener('click', function () { // if the reply button is clicked
         let letter; // get the open letter
         for (let i = 0; i < letters.length; i++) {
-            if (letters[i]['index'] == open) {
+            if (letters[i]['id'] == open) {
                 letter = letters[i]
             }
         }
 
-        let data = {users: letter['to'].concat(letter['from']), from: name, index: letter['index'], reply: document.getElementById('replyMsg').value} // create the data 
+        let data = {users: letter['to'].concat(letter['from']), from: name, id: letter['id'], reply: document.getElementById('replyMsg').value} // create the data 
 
         console.log(letter)
         document.getElementById('replyMsg').value = '' // reset the input
 
         socket.emit('reply', JSON.stringify(data)) // send the data
+        console.log(JSON.stringify(data))
+    })
+
+
+    socket.on('id', (data) => { // when the server responds to the id message 
+        let names = to.value.replace(', ', ',').split(',') // format the names to send to
+        for (let i = 0; i < names.length; i++) {
+            names[i] = formatName(names[i])
+        }
+
+        data = { display: 'To: ' + to.value.replace(',', ', '), from: name, to: names, body: [name + '|' + body.value], read: '', id: data } //  create the message data
+
+        if (letters.length >= 15) { // delete a message if there are too many
+            letters.splice(14, 10)
+        }
+        letters.unshift(data) // add the message data to the letters
+
+        for (let i = 0; i < letters.length; i++) { // for each letter remove the event listener
+            try {
+                document.getElementById('i' + i.toString()).removeEventListener('click', clicked)
+            } catch { }
+        }
+        display() // display all the messages
+
+        socket.emit('send', JSON.stringify(data)) // send the letter to the server
+
+        addNewLetterGUI.style.transform = "translateY(95vh)"; // move the new letter gui down
+        setTimeout(function () { // erase the inputs after 0.6 seconds
+            to.value = '';
+            body.value = '';
+        }, 600)
+    })
+
+    socket.on('recieve', (dataRaw) => { // when a message is recieved
+        let data = JSON.parse(dataRaw) // parse the data and create a variable for the status
+        let status = { name: data['from'] }
+        try { // use try to catch errors
+            for (let i = 0; i < letters.length; i++) { // for each letter remove the event listener
+                document.getElementById('i' + i.toString()).removeEventListener('click', clicked)
+            }
+
+            data['read'] = ' 🔵' // set the read component of the data to a blue circle to represeent it is not read
+            data['display'] = 'From: ' + unformatName(data['from']) // set the display variable so it displays who it is from properly
+
+            if (letters.length >= 15) { // if there are too many letters remove one
+                letters.splice(14, 10)
+            }
+            letters.unshift(data) // add the letter to the letters
+
+            display() // display all the letters
+
+            status['status'] = 200 // set the status to delivered
+
+        } catch (e) {
+
+            status['status'] = 400 // if there was a faliure set the status to failed
+            console.log(e)
+
+        }
+
+        socket.emit('msgStatus', JSON.stringify(status)) // send a message to the server saying the status
+    })
+
+    socket.on('reply', (dataRaw) => {
+        let data = JSON.parse(dataRaw) // get the data sent
+        let status = { name: data['from'] } // create the status var
+
+        try {
+            for (let i = 0; i < letters.length; i++) { // find the correct letter
+                console.log(letters[i]['id'], data['id'])
+                if (data['id'] == letters[i]['id']) {
+                    let letter = letters[i]
+
+                    letter['body'].push(data['from'] + '|' + data['reply']) // add the reply to the letter
+
+                    if (open == data['id']) { // if the letter is open display it
+                        letter['read'] = ''
+                        document.getElementById('i' + i).innerHTML = letter['display'] + letter['read']
+                        let inner = ''
+                        for (let i = 0; i < letter['body'].length; i++) {
+                            let msg = letter['body'][i].split('|');
+                            if (msg[0] == name) {
+                                inner = inner + '<div class=\'containerN\'> <p class=\'name me\'>' + unformatName(msg[0]) + '</p> </div> <div class=\'container\'> <p class=\'me\'>' + msg[1] + '</p> </div>'
+                            } else {
+                                inner = inner + '<div class=\'containerN\'> <p class=\'name other\'>' + unformatName(msg[0]) + '</p> </div> <div class=\'container\'> <p class=\'other\'>' + msg[1] + '</p></div>'
+                            }
+                        }
+                        readBody.innerHTML = inner;
+                        readBody.scroll({
+                            top: readBody.scrollHeight - readBody.clientHeight,
+                            left: 0,
+                            behavior: 'smooth'
+                        }); // scroll the body
+                    } else { // otherwise set the read var to un read
+                        letter['read'] = ' 🔵'
+                        document.getElementById('i' + i).innerHTML = letter['display'] + letter['read'] // show the change
+                    }
+                    letters[i] = letter // update the new letter
+                }
+            }
+
+            status['status'] = 200 // set the status to good
+        } catch (e) {
+            console.log(e)
+            status['status'] = 400 // if it failed set the status to bad
+        }
+
+        socket.emit('msgStatus', JSON.stringify(status)) // send a message to the server saying the status
+    })
+
+    socket.on('msgStatus', (data) => { // if a message status message is received
+        if (currentStatus != 400 && currentStatus != 404) { // if a faliure message was not already received
+            if (data == 200) { // if the status is something set the current statis and set the message status variable
+                msgStatus.innerHTML = '✅ Delivered'
+                currentStatus = 200
+            } else if (data == 404) {
+                msgStatus.innerHTML = '❌ User not found'
+                currentStatus = 404;
+            } else {
+                msgStatus.innerHTML = '❌ Unknown Error'
+                currentStatus = 400;
+            }
+            msgStatus.style.opacity = '1'; // reveal the message status element
+            setTimeout(function () { // after 3 seconds reset the html element and the current status variable
+                msgStatus.style.opacity = '0';
+                currentStatus = 0;
+            }, 3000)
+        }
     })
 });
-
-socket.on('index', (data) => { // when the server responds to the index message 
-    let names = to.value.replace(', ', ',').split(',') // format the names to send to
-    for(let i = 0; i < names.length; i++) {
-        names[i] = formatName(names[i])
-    }
-
-    data = { display: 'To: ' + to.value.replace(',', ', '), from: name, to: names, body: [name+'|'+body.value], read: '' } //  create the message data
-
-    if (letters.length >= 15) { // delete a message if there are too many
-        letters.splice(14, 10)
-    }
-    letters.unshift(data) // add the message data to the letters
-    console.log(data)
-
-    for (let i = 0; i < letters.length; i++) { // for each letter remove the event listener
-        try {
-            document.getElementById('i' + i.toString()).removeEventListener('click', clicked)
-        } catch {}
-    }
-    display() // display all the messages
-
-    socket.emit('send', JSON.stringify(data)) // send the letter to the server
-
-    addNewLetterGUI.style.transform = "translateY(87vh)"; // move the new letter gui down
-    setTimeout(function () { // erase the inputs after 0.6 seconds
-        to.value = '';
-        body.value = '';
-    }, 600)
-})
-
-socket.on('recieve', (dataRaw) => { // when a message is recieved
-    let data = JSON.parse(dataRaw) // parse the data and create a variable for the status
-    let status = { name: data['from']}
-    try { // use try to catch errors
-        for (let i = 0; i < letters.length; i++) { // for each letter remove the event listener
-            document.getElementById('i' + i.toString()).removeEventListener('click', clicked)
-        }
-
-        data['read'] = ' 🔵' // set the read component of the data to a blue circle to represeent it is not read
-        data['display'] = 'From: ' + unformatName(data['from']) // set the display variable so it displays who it is from properly
-
-        if (letters.length >= 15) { // if there are too many letters remove one
-            letters.splice(14,10)
-        }
-        letters.unshift(data) // add the letter to the letters
-
-        display() // display all the letters
-
-        status['status'] = 200 // set the status to delivered
-
-    } catch (e) {
-
-        status['status'] = 400 // if there was a faliure set the status to failed
-        console.log(e)
-
-    }
-
-    socket.emit('msgStatus', JSON.stringify(status)) // send a message to the server saying the status
-})
-
-socket.on('reply', (dataRaw) => {
-    let data = JSON.parse(dataRaw) // get the data sent
-    let status = {name: data['from']} // create the status var
-    
-    try {
-        for (let i = 0; i < letters.length; i++) { // find the correct letter
-            if (data['index'] == letters[i]['index'])  {
-                let letter = letters[i]
-
-                letter['body'].push(data['from'] + '|' + data['reply']) // add the reply to the letter
-
-                if (open == data['index']) { // if the letter is open display it
-                    console.log(open)
-                    letter['read'] = ''
-                    document.getElementById('i'+i).innerHTML = letter['display']+letter['read']
-                    let inner = ''
-                    for (let i = 0; i < letter['body'].length; i++) {
-                        let msg = letter['body'][i].split('|');
-                        if (msg[0] == name) {
-                            inner = inner + '<div class=\'containerN\'> <p class=\'name me\'>' + unformatName(msg[0]) + '</p> </div> <div class=\'container\'> <p class=\'me\'>' + msg[1] + '</p> </div>'
-                        } else {
-                            inner = inner + '<div class=\'containerN\'> <p class=\'name other\'>' + unformatName(msg[0]) + '</p> </div> <div class=\'container\'> <p class=\'other\'>' + msg[1] + '</p></div>'
-                        }
-                    }
-                    readBody.innerHTML = inner;
-                    readBody.scroll({
-                        top: readBody.scrollHeight - readBody.clientHeight,
-                        left: 0,
-                        behavior: 'smooth'
-                    }); // scroll the body
-                } else { // otherwise set the read var to un read
-                    letter['read'] = ' 🔵'
-                    document.getElementById('i' + i).innerHTML = letter['display'] + letter['read'] // show the change
-                }
-                console.log(letter['display'] + letter['read'])
-                letters[i] = letter // update the new letter
-            }
-        }
-
-        status['status'] = 200 // set the status to good
-    } catch (e) {
-        console.log(e)
-        status['status'] = 400 // if it failed set the status to bad
-    }
-
-    socket.emit('msgStatus', JSON.stringify(status)) // send a message to the server saying the status
-})
-
-socket.on('msgStatus', (data) => { // if a message status message is received
-    if (currentStatus != 400 && currentStatus != 404) { // if a faliure message was not already received
-        if (data == 200) { // if the status is something set the current statis and set the message status variable
-            msgStatus.innerHTML = '✅ Delivered'
-            currentStatus = 200
-        } else if (data == 404) {
-            msgStatus.innerHTML = '❌ User not found'
-            currentStatus = 404;
-        } else {
-            msgStatus.innerHTML = '❌ Unknown Error'
-            currentStatus = 400;
-        }
-        msgStatus.style.opacity = '1'; // reveal the message status element
-        setTimeout(function () { // after 3 seconds reset the html element and the current status variable
-            msgStatus.style.opacity = '0';
-            currentStatus = 0;
-        }, 3000)
-    }
-})
