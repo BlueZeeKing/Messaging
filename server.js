@@ -25,19 +25,24 @@ const io = require("socket.io")(server) // set up socket.io
 io.on('connection', (socket) => { // when a user connects
     let name // set the name variable
 
-    socket.on('login', (data) => { // when a login message is recieved 
-        em.addListener(data, function (data) { // create a event listener to recieve messages and message status alerts
-            socket.emit('recieve', data)
-        })
-        em.addListener(data + 'status', function (data) {
-            socket.emit('msgStatus', data)
-        })
-        em.addListener(data + 'reply', function (data) {
-            socket.emit('reply', data)
-            console.log('reply')
-        })
-        users.push(data) // add the user to the list of users and set the name variable to the name of the user
-        name = data
+    socket.on('login', (data) => { // when a login message is recieved
+        if (data.includes('|') || users.includes(data)) {
+            socket.emit('badlogin')
+        } else {
+            em.addListener(data, function (data) { // create a event listener to recieve messages and message status alerts
+                socket.emit('recieve', data)
+            })
+            em.addListener(data + 'status', function (data) {
+                socket.emit('msgStatus', data)
+            })
+            em.addListener(data + 'reply', function (data) {
+                socket.emit('reply', data)
+                console.log('reply')
+            })
+            users.push(data) // add the user to the list of users and set the name variable to the name of the user
+            name = data
+            socket.emit('goodlogin')
+        }
     })
 
     socket.on('send', (dataRaw) => { //  when a send message is recieved forward it to the person it is to
