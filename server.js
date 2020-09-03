@@ -25,19 +25,24 @@ const io = require("socket.io")(server) // set up socket.io
 io.on('connection', (socket) => { // when a user connects
     let name // set the name variable
 
-    socket.on('login', (data) => { // when a login message is recieved 
-        em.addListener(data, function (data) { // create a event listener to recieve messages and message status alerts
-            socket.emit('recieve', data)
-        })
-        em.addListener(data + 'status', function (data) {
-            socket.emit('msgStatus', data)
-        })
-        em.addListener(data + 'reply', function (data) {
-            socket.emit('reply', data)
-            console.log('reply')
-        })
-        users.push(data) // add the user to the list of users and set the name variable to the name of the user
-        name = data
+    socket.on('login', (data) => { // when a login message is recieved
+        if (data.includes('|') || users.includes(data)) {
+            socket.emit('badlogin')
+        } else {
+            em.addListener(data, function (data) { // create a event listener to recieve messages and message status alerts
+                socket.emit('recieve', data)
+            })
+            em.addListener(data + 'status', function (data) {
+                socket.emit('msgStatus', data)
+            })
+            em.addListener(data + 'reply', function (data) {
+                socket.emit('reply', data)
+                console.log('reply')
+            })
+            users.push(data) // add the user to the list of users and set the name variable to the name of the user
+            name = data
+            socket.emit('goodlogin')
+        }
     })
 
     socket.on('send', (dataRaw) => { //  when a send message is recieved forward it to the person it is to
@@ -46,14 +51,15 @@ io.on('connection', (socket) => { // when a user connects
             if (users.includes(data['to'][i])) {
                 em.emit(data['to'][i], dataRaw)
             } else {
-                socket.emit('msgStatus', 404)
+                console.log(data)
+                socket.emit('msgStatus', JSON.stringify({ id: data.id, status: 404, user: data.to[i]}))
             }
         }
     })
 
     socket.on('msgStatus', (dataRaw) => { // when a message status alert is recieved forward that alert to where it should go
         let data = JSON.parse(dataRaw)
-        em.emit(data['name']+'status', data['status'])
+        em.emit(data['name']+'status', dataRaw)
     })
 
     socket.on('id', (data) => { // when an id message is recieved send back a message with the current id than add one to the id
@@ -76,8 +82,8 @@ io.on('connection', (socket) => { // when a user connects
 
     socket.on('disconnect', () => { // when a user diconnects remove the event listeners assoicted with them and remove them from the users list
         em.removeAllListeners(name)
-        em.removeAllListeners(name+'status')
+        em.removeAllListeners(name + 'status')
+        em.removeAllListeners(name + 'reply')
         users.splice(users.indexOf(name), 1)
-        console.log(users)
     });
 });
