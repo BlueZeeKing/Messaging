@@ -145,26 +145,36 @@ function submitName () { // when you submit your name
 
     socket.on('id', (data) => { // when the server responds to the id message 
         let names = to.value.replace(', ', ',').split(',') // format the names to send to
-        for (let i = 0; i < names.length; i++) {
-            names[i] = formatName(names[i])
+        names.splice(names.indexOf(name))
+        if (names.length > 0) {
+            for (let i = 0; i < names.length; i++) {
+                names[i] = formatName(names[i])
+            }
+
+            data = { display: 'To: ' + to.value.replace(',', ', '), from: name, to: names, body: [name + '|' + body.value], read: '', id: data } //  create the message data
+
+            if (letters.length >= 15) { // delete a message if there are too many
+                letters.splice(14, 10)
+            }
+            letters.unshift(data) // add the message data to the letters
+
+            for (let i = 0; i < letters.length; i++) { // for each letter remove the event listener
+                try {
+                    document.getElementById('i' + i.toString()).removeEventListener('click', clicked)
+                } catch { }
+            }
+            display() // display all the messages
+
+            socket.emit('send', JSON.stringify(data)) // send the letter to the server
+        } else {
+            msgStatus.innerHTML = '❌ Can\'t send messages to self'
+            currentStatus = 404
+            msgStatus.style.opacity = '1'; // reveal the message status element
+            setTimeout(function () { // after 3 seconds reset the html element and the current status variable
+                msgStatus.style.opacity = '0';
+                currentStatus = 0;
+            }, 3000)
         }
-
-        data = { display: 'To: ' + to.value.replace(',', ', '), from: name, to: names, body: [name + '|' + body.value], read: '', id: data } //  create the message data
-
-        if (letters.length >= 15) { // delete a message if there are too many
-            letters.splice(14, 10)
-        }
-        letters.unshift(data) // add the message data to the letters
-
-        for (let i = 0; i < letters.length; i++) { // for each letter remove the event listener
-            try {
-                document.getElementById('i' + i.toString()).removeEventListener('click', clicked)
-            } catch { }
-        }
-        display() // display all the messages
-
-        socket.emit('send', JSON.stringify(data)) // send the letter to the server
-
         addNewLetterGUI.style.transform = "translateY(95vh)"; // move the new letter gui down
         setTimeout(function () { // erase the inputs after 0.6 seconds
             to.value = '';
