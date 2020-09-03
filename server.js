@@ -46,14 +46,14 @@ io.on('connection', (socket) => { // when a user connects
             if (users.includes(data['to'][i])) {
                 em.emit(data['to'][i], dataRaw)
             } else {
-                socket.emit('msgStatus', 404)
+                socket.emit('msgStatus', JSON.stringify({id: data.id, status: 404}))
             }
         }
     })
 
     socket.on('msgStatus', (dataRaw) => { // when a message status alert is recieved forward that alert to where it should go
         let data = JSON.parse(dataRaw)
-        em.emit(data['name']+'status', data['status'])
+        em.emit(data['name']+'status', dataRaw)
     })
 
     socket.on('id', (data) => { // when an id message is recieved send back a message with the current id than add one to the id
@@ -78,6 +78,5 @@ io.on('connection', (socket) => { // when a user connects
         em.removeAllListeners(name)
         em.removeAllListeners(name+'status')
         users.splice(users.indexOf(name), 1)
-        console.log(users)
     });
 });

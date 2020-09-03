@@ -51,10 +51,8 @@ function clicked (e) { // make a function that handles when a letter is opened
         }
     }
     readBody.innerHTML = inner;
-    console.log(inner)
 
-    console.log(letter) // then move the divider that holds all the text up
-    document.getElementById('readLetter').style.transform = "translateY(0vh)";
+    document.getElementById('readLetter').style.transform = "translateY(0vh)"; // then move the divider that holds all the text up
     letter['read'] = '' // set the read to zero
     letters[i] = letter
     e.srcElement.innerHTML = letter['display'] + letter['read']
@@ -63,7 +61,7 @@ function clicked (e) { // make a function that handles when a letter is opened
 function display() { // create a function to display letters
     let inner = ''; // set the inner part of the letters div element 
     if (letters.length <= 0) {
-        inner = 'No letters'
+        inner = '<p>No letters</p>'
     } else {
         for (let i = 0; i < letters.length - 1; i++) {
             inner = inner + '<p class = \'letter\' id="' + 'i' + i.toString() + '">' + letters[i]['display'] + ' ' + letters[i]['read'] + '</p><hr>' // create a paragraph element for each letter that shows who it is from and if it has been read
@@ -123,11 +121,9 @@ document.getElementById("submit").addEventListener("click", function () { // whe
 
         let data = {users: letter['to'].concat(letter['from']), from: name, id: letter['id'], reply: document.getElementById('replyMsg').value} // create the data 
 
-        console.log(letter)
         document.getElementById('replyMsg').value = '' // reset the input
 
         socket.emit('reply', JSON.stringify(data)) // send the data
-        console.log(JSON.stringify(data))
     })
 
 
@@ -162,7 +158,7 @@ document.getElementById("submit").addEventListener("click", function () { // whe
 
     socket.on('recieve', (dataRaw) => { // when a message is recieved
         let data = JSON.parse(dataRaw) // parse the data and create a variable for the status
-        let status = { name: data['from'] }
+        let status = { name: data['from'], id: data.id }
         try { // use try to catch errors
             for (let i = 0; i < letters.length; i++) { // for each letter remove the event listener
                 document.getElementById('i' + i.toString()).removeEventListener('click', clicked)
@@ -196,7 +192,6 @@ document.getElementById("submit").addEventListener("click", function () { // whe
 
         try {
             for (let i = 0; i < letters.length; i++) { // find the correct letter
-                console.log(letters[i]['id'], data['id'])
                 if (data['id'] == letters[i]['id']) {
                     let letter = letters[i]
 
@@ -237,12 +232,20 @@ document.getElementById("submit").addEventListener("click", function () { // whe
         socket.emit('msgStatus', JSON.stringify(status)) // send a message to the server saying the status
     })
 
-    socket.on('msgStatus', (data) => { // if a message status message is received
+    socket.on('msgStatus', (rawData) => { // if a message status message is received
+        let data = JSON.parse(rawData)
+        console.log(rawData)
         if (currentStatus != 400 && currentStatus != 404) { // if a faliure message was not already received
-            if (data == 200) { // if the status is something set the current statis and set the message status variable
+            if (data.status == 200) { // if the status is something set the current statis and set the message status variable
                 msgStatus.innerHTML = '✅ Delivered'
                 currentStatus = 200
-            } else if (data == 404) {
+            } else if (data.status == 404) {
+                for (let i = 0; i < letters.length; i++) {
+                    if (letters[i].id == data.id) {
+                        letters.splice(i, 1)
+                        display()
+                    }
+                }
                 msgStatus.innerHTML = '❌ User not found'
                 currentStatus = 404;
             } else {
