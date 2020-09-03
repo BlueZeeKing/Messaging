@@ -46,7 +46,8 @@ io.on('connection', (socket) => { // when a user connects
             if (users.includes(data['to'][i])) {
                 em.emit(data['to'][i], dataRaw)
             } else {
-                socket.emit('msgStatus', JSON.stringify({id: data.id, status: 404}))
+                console.log(data)
+                socket.emit('msgStatus', JSON.stringify({ id: data.id, status: 404, user: data.to[i]}))
             }
         }
     })

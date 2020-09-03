@@ -241,12 +241,17 @@ document.getElementById("submit").addEventListener("click", function () { // whe
                 currentStatus = 200
             } else if (data.status == 404) {
                 for (let i = 0; i < letters.length; i++) {
-                    if (letters[i].id == data.id) {
+                    if (letters[i].id == data.id && letters[i].to.length == 1) {
                         letters.splice(i, 1)
+                        display()
+                    } else if (letters[i].id == data.id) {
+                        letters[i].to.splice(letters[i].to.indexOf(data.user))
+                        letters[i].display = 'To: ' + letters[i].to
+                        console.log(letters[i])
                         display()
                     }
                 }
-                msgStatus.innerHTML = '❌ User not found'
+                msgStatus.innerHTML = '❌ User ' + unformatName(data.user) + ' not found'
                 currentStatus = 404;
             } else {
                 msgStatus.innerHTML = '❌ Unknown Error'
