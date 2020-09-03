@@ -1,18 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="font-size: 24px">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Messaging</title>
-    <meta name="color-scheme" content="dark light">
+    <!--<meta name="color-scheme" content="dark light">-->
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=MuseoModerno:wght@400;600&display=swap" media="(prefers-color-scheme: light)"rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=MuseoModerno:wght@300;500&display=swap" media="(prefers-color-scheme: dark)" rel="stylesheet">
     <script src="/socket.io/socket.io.js"></script>
 </head>
-<body>
+<body class="bg-green-200">
 
-    <div id='letters'>
+    <div id='letters' class="h-full">
         <p>No letters</p>
     </div>
 
@@ -22,26 +20,32 @@
         <div class="pencil"></div>
     </div>
 
-    <div id="namePrompt">
+    <div id="namePrompt" class="modal">
         Name: <input id="name" type="text">
         <div></div>
         <button id="submit">Submit!</button>
     </div>
 
-    <div id="newLetter">
-        To: <input id="to" type="text">
+    <div id="newLetter" class="popupGUI">
+        To: <input id="to" type="text" class="bg-blue-100">
         <br>
-        <hr>
-        <textarea id="body"></textarea>
+        <hr class="box-border m-1 border-blue-200">
+        <textarea
+            class="w-full h-56 box-border resize-none outline-none border-blue-200 focus:border-green-200 border-2 rounded-sm bg-blue-100 focus:bg-green-100"
+            id="body"></textarea>
         <button id="send">Send!</button>
-        <p id="closeNew">❌</p>
+        <p class="absolute top-0 right-0 p-1 cursor-default" id="closeNew">❌</p>
     </div>
 
-    <div id="readLetter">
+    <div id="readLetter" class="popupGUI">
         <p id="from"></p>
         <hr>
         <div id="bodyR"></div>
-        <button id="close">Close</button><button id='reply'>Reply</button><input name="reply" id='replyMsg'>
+        <div class="float-left flex w-full">
+            <button class="flex-grow-0" id="close">Close</button>
+            <input class="flex-grow inline bg-blue-100 my-2" name="reply" id='replyMsg'>
+            <button class="flex-grow-0" id='reply'>Reply</button>
+        </div>
     </div>
 
     <p id="msgStatus"></p>

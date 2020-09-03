@@ -1,0 +1,57 @@
+@tailwind base;
+
+p {
+    @apply p-1
+}
+
+button {
+    @apply border-blue-500 border-2 bg-white transition-all duration-500 outline-none text-blue-500 rounded p-1 px-4 m-2 bg-opacity-0;
+}
+
+button:disabled {
+    @apply border-gray-400 text-gray-500;
+}
+
+button:focus {
+    @apply outline-none;
+}
+
+button.clicked {
+    @apply bg-blue-500 text-white outline-none;
+}
+
+@tailwind components;
+
+.modal {
+    width: 50%;
+    height: 50%;
+    top: 25%;
+    right: 25%;
+    @apply text-center p-4 absolute box-border bottom-0 shadow rounded bg-blue-100
+}
+
+@media (max-width: 640px) {
+    .modal {
+        width: 74%;
+        height: 74%;
+        top: 13%;
+        right: 13%;
+    }
+}
+
+.modalHeader {
+    @apply font-bold text-lg py-1;
+}
+.modalBody {
+    @apply py-1;
+}
+
+.popupGUI {
+    height: 91vh;
+    width: 94vw;
+    margin-left: 3vw;
+    transform: translateY(91vh);
+    @apply fixed box-border bottom-0 p-2 pt-4 shadow rounded-t bg-blue-100
+}
+
+@tailwind utilities;
