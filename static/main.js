@@ -75,7 +75,7 @@ function display() { // create a function to display letters
     }
 }
 
-document.getElementById("submit").addEventListener("click", function () { // when you submit your name
+function submitName () { // when you submit your name
     var socket = io.connect(window.location.href); // start the socket connection
     document.getElementById("namePrompt").style.opacity = "0"; // make the prompt disappear send the login message to the server and set the name variable
     socket.emit('login', formatName(document.getElementById('name').value));
@@ -98,9 +98,9 @@ document.getElementById("submit").addEventListener("click", function () { // whe
         }, 800)
     });
 
-    document.getElementById("send").addEventListener("click", function () { // send a message to the server to get the current message id
-        socket.emit('id')
-    });
+    document.getElementById("send").addEventListener("click", function () { socket.emit('id') }); // send a message to the server to get the current message id
+    to.addEventListener("keypress", function (e) { if (e.code == 'Enter') socket.emit('id') });
+    document.getElementById("body").addEventListener("keypress", function (e) { if (e.code == 'Enter') socket.emit('id') });
 
     document.getElementById("close").addEventListener("click", function () { // if the close button is clicked move the read letter gui down
         document.getElementById('readLetter').style.transform = "translateY(95vh)";
@@ -119,11 +119,27 @@ document.getElementById("submit").addEventListener("click", function () { // whe
             }
         }
 
-        let data = {users: letter['to'].concat(letter['from']), from: name, id: letter['id'], reply: document.getElementById('replyMsg').value} // create the data 
+        let data = { users: letter['to'].concat(letter['from']), from: name, id: letter['id'], reply: document.getElementById('replyMsg').value } // create the data 
 
         document.getElementById('replyMsg').value = '' // reset the input
 
         socket.emit('reply', JSON.stringify(data)) // send the data
+    })
+    document.getElementById('replyMsg').addEventListener('keypress', function (e) { // if the reply button is clicked
+        if (e.code == 'Enter') {
+            let letter; // get the open letter
+            for (let i = 0; i < letters.length; i++) {
+                if (letters[i]['id'] == open) {
+                    letter = letters[i]
+                }
+            }
+
+            let data = { users: letter['to'].concat(letter['from']), from: name, id: letter['id'], reply: document.getElementById('replyMsg').value } // create the data 
+
+            document.getElementById('replyMsg').value = '' // reset the input
+
+            socket.emit('reply', JSON.stringify(data)) // send the data
+        }
     })
 
 
@@ -264,4 +280,7 @@ document.getElementById("submit").addEventListener("click", function () { // whe
             }, 3000)
         }
     })
-});
+}
+
+document.getElementById("submit").addEventListener("click", submitName);
+document.getElementById("name").addEventListener("keypress", function (e) { if (e.code == 'Enter') submitName() });
