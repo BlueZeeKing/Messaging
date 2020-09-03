@@ -77,7 +77,8 @@ io.on('connection', (socket) => { // when a user connects
 
     socket.on('disconnect', () => { // when a user diconnects remove the event listeners assoicted with them and remove them from the users list
         em.removeAllListeners(name)
-        em.removeAllListeners(name+'status')
+        em.removeAllListeners(name + 'status')
+        em.removeAllListeners(name + 'reply')
         users.splice(users.indexOf(name), 1)
     });
 });

@@ -112,21 +112,23 @@ function submitName () { // when you submit your name
     });
 
     document.getElementById('reply').addEventListener('click', function () { // if the reply button is clicked
-        let letter; // get the open letter
-        for (let i = 0; i < letters.length; i++) {
-            if (letters[i]['id'] == open) {
-                letter = letters[i]
+        if (document.getElementById('replyMsg').value != '') {
+            let letter; // get the open letter
+            for (let i = 0; i < letters.length; i++) {
+                if (letters[i]['id'] == open) {
+                    letter = letters[i]
+                }
             }
+
+            let data = { users: letter['to'].concat(letter['from']), from: name, id: letter['id'], reply: document.getElementById('replyMsg').value } // create the data 
+
+            document.getElementById('replyMsg').value = '' // reset the input
+
+            socket.emit('reply', JSON.stringify(data)) // send the data
         }
-
-        let data = { users: letter['to'].concat(letter['from']), from: name, id: letter['id'], reply: document.getElementById('replyMsg').value } // create the data 
-
-        document.getElementById('replyMsg').value = '' // reset the input
-
-        socket.emit('reply', JSON.stringify(data)) // send the data
     })
     document.getElementById('replyMsg').addEventListener('keypress', function (e) { // if the reply button is clicked
-        if (e.code == 'Enter') {
+        if (e.code == 'Enter' && document.getElementById('replyMsg').value != '') {
             let letter; // get the open letter
             for (let i = 0; i < letters.length; i++) {
                 if (letters[i]['id'] == open) {
@@ -145,8 +147,13 @@ function submitName () { // when you submit your name
 
     socket.on('id', (data) => { // when the server responds to the id message 
         let names = to.value.replace(', ', ',').split(',') // format the names to send to
-        names.splice(names.indexOf(name))
-        if (names.length > 0) {
+        console.log(names)
+        console.log(name)
+        if (names.includes(name)) {
+            names.splice(names.indexOf(name), 1)
+        }
+        console.log(names)
+        if (names.length > 0 && body.value != '') {
             for (let i = 0; i < names.length; i++) {
                 names[i] = formatName(names[i])
             }
@@ -166,6 +173,19 @@ function submitName () { // when you submit your name
             display() // display all the messages
 
             socket.emit('send', JSON.stringify(data)) // send the letter to the server
+            addNewLetterGUI.style.transform = "translateY(95vh)"; // move the new letter gui down
+            setTimeout(function () { // erase the inputs after 0.6 seconds
+                to.value = '';
+                body.value = '';
+            }, 600)
+        } else if (names.length > 0) {
+            msgStatus.innerHTML = '❌ Message is empty'
+            currentStatus = 400
+            msgStatus.style.opacity = '1'; // reveal the message status element
+            setTimeout(function () { // after 3 seconds reset the html element and the current status variable
+                msgStatus.style.opacity = '0';
+                currentStatus = 0;
+            }, 3000)
         } else {
             msgStatus.innerHTML = '❌ Can\'t send messages to self'
             currentStatus = 404
@@ -175,11 +195,6 @@ function submitName () { // when you submit your name
                 currentStatus = 0;
             }, 3000)
         }
-        addNewLetterGUI.style.transform = "translateY(95vh)"; // move the new letter gui down
-        setTimeout(function () { // erase the inputs after 0.6 seconds
-            to.value = '';
-            body.value = '';
-        }, 600)
     })
 
     socket.on('recieve', (dataRaw) => { // when a message is recieved
