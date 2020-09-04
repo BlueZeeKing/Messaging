@@ -684,11 +684,11 @@ button.clicked {
   background-color: rgba(235, 248, 255, var(--bg-opacity))
 }
 
-@media (max-width: 640px) {
+@media (max-width: 640px)  {
   .modal {
     width: 74%;
-    height: 74%;
-    top: 13%;
+    height: 50%;
+    top: 25%;
     right: 13%;
   }
 }
@@ -703,6 +703,45 @@ button.clicked {
 .modalBody {
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
+}
+
+.text {
+  --border-opacity: 1;
+  border-color: #4299e1;
+  border-color: rgba(66, 153, 225, var(--border-opacity));
+  border-bottom-width: 2px;
+  --bg-opacity: 1;
+  background-color: #fff;
+  background-color: rgba(255, 255, 255, var(--bg-opacity));
+  transition-property: all;
+  position: relative;
+  transition-duration: 500ms;
+  z-index: 10;
+  --bg-opacity: 0;
+  border-radius: 0;
+}
+
+.text:focus {
+  --border-opacity: 1;
+  border-color: #48bb78;
+  border-color: rgba(72, 187, 120, var(--border-opacity));
+  outline: 0;
+}
+
+.textPlaceholder {
+  position: absolute;
+  left: 0;
+  --text-opacity: 1;
+  color: #4a5568;
+  color: rgba(74, 85, 104, var(--text-opacity));
+  transition-property: all;
+  transition-duration: 500ms;
+  z-index: 0;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .popupGUI {
@@ -721,6 +760,11 @@ button.clicked {
   --bg-opacity: 1;
   background-color: #ebf8ff;
   background-color: rgba(235, 248, 255, var(--bg-opacity))
+}
+
+.pencil {
+  -webkit-clip-path: polygon(0% 0%, 100% 0%, 100% 80%, 50% 100%, 0% 80%);
+          clip-path: polygon(0% 0%, 100% 0%, 100% 80%, 50% 100%, 0% 80%);
 }
 
 .space-y-0 > :not(template) ~ :not(template) {
@@ -22344,6 +22388,27 @@ button.clicked {
 .animate-bounce {
   -webkit-animation: bounce 1s infinite;
           animation: bounce 1s infinite;
+}
+
+.noselect {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.focus-scale {
+  transform: scale(1) rotate(45deg);
+}
+
+.focus-scale:focus {
+  transform: scale(0.9) rotate(45deg);
+}
+
+.px-65 {
+  padding-right: 1.7rem;
+  padding-left: 1.7rem;
 }
 
 @media (min-width: 640px) {

@@ -27,14 +27,14 @@ button.clicked {
     height: 50%;
     top: 25%;
     right: 25%;
-    @apply text-center p-4 absolute box-border bottom-0 shadow rounded bg-blue-100
+    @apply text-center p-4 fixed box-border bottom-0 shadow rounded bg-blue-100
 }
 
-@media (max-width: 640px) {
+@media (max-width: 640px)  {
     .modal {
         width: 74%;
-        height: 74%;
-        top: 13%;
+        height: 50%;
+        top: 25%;
         right: 13%;
     }
 }
@@ -46,6 +46,18 @@ button.clicked {
     @apply py-1;
 }
 
+.text {
+    @apply border-blue-500 border-b-2 bg-white transition-all relative duration-500 z-10 bg-opacity-0 rounded-none;
+}
+
+.text:focus {
+    @apply border-green-500 outline-none;
+}
+
+.textPlaceholder {
+    @apply absolute left-0 text-gray-700 transition-all duration-500 z-0 noselect;
+}
+
 .popupGUI {
     height: 91vh;
     width: 94vw;
@@ -54,4 +66,29 @@ button.clicked {
     @apply fixed box-border bottom-0 p-2 pt-4 shadow rounded-t bg-blue-100
 }
 
+.pencil {
+    clip-path: polygon(0% 0%, 100% 0%, 100% 80%, 50% 100%, 0% 80%);
+}
+
 @tailwind utilities;
+
+.noselect {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.focus-scale {
+    transform: scale(1) rotate(45deg);
+}
+.focus-scale:focus {
+    transform: scale(0.9) rotate(45deg);
+}
+
+.px-65 {
+    padding-right: 1.7rem;
+    padding-left: 1.7rem;
+}

@@ -7,48 +7,56 @@
     <!--<meta name="color-scheme" content="dark light">-->
     <link rel="stylesheet" href="styles.css">
     <script src="/socket.io/socket.io.js"></script>
+    <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://cdn.jsdelivr.net/npm/animejs@3.0.1/lib/anime.min.js"></script>
+    <script src="react.js"></script>
 </head>
-<body class="bg-green-200">
+<body class="bg-green-200 overflow-hidden">
 
-    <div id='letters' class="h-full">
+    <div id="backdrop" class="bg-black z-40 opacity-50 fixed bottom-0 right-0"></div>
+
+    <div id='letters' class="overflow-auto h-full relative z-10">
         <p>No letters</p>
     </div>
 
-    <div id="newLetterBtn">
-        <div id="newLetterBack" class="notClicked"></div>
-        <div id="detector"></div>
-        <div class="pencil"></div>
-    </div>
-
-    <div id="namePrompt" class="modal">
-        Name: <input id="name" type="text">
-        <div></div>
-        <button id="submit">Submit!</button>
-    </div>
-
-    <div id="newLetter" class="popupGUI">
-        To: <input id="to" type="text" class="bg-blue-100">
-        <br>
-        <hr class="box-border m-1 border-blue-200">
-        <textarea
-            class="w-full h-56 box-border resize-none outline-none border-blue-200 focus:border-green-200 border-2 rounded-sm bg-blue-100 focus:bg-green-100"
-            id="body"></textarea>
-        <button id="send">Send!</button>
-        <p class="absolute top-0 right-0 p-1 cursor-default" id="closeNew">❌</p>
-    </div>
-
-    <div id="readLetter" class="popupGUI">
-        <p id="from"></p>
-        <hr>
-        <div id="bodyR"></div>
-        <div class="float-left flex w-full">
-            <button class="flex-grow-0" id="close">Close</button>
-            <input class="flex-grow inline bg-blue-100 my-2" name="reply" id='replyMsg'>
-            <button class="flex-grow-0" id='reply'>Reply</button>
+    <div tabindex="0" id="detector" class="m-2 fixed bottom-0 z-30 right-0 outline-none transition-all duration-500 bg-blue-600 focus:bg-teal-600 shadow-lg focus:shadow-sm w-16 h-16 focus-scale rounded-full">
+        <div class="px-65 py-2 h-full w-full">
+            <div class="pencil h-full w-full bg-black"></div>
         </div>
     </div>
 
-    <p id="msgStatus"></p>
+    <div id="namePrompt" class="modal z-50">
+        <div id="nameContainer"></div>
+        <div></div>
+        <div id="submit"></div>
+    </div>
+
+    <div id="newLetter" class="flex flex-col popupGUI z-50">
+        <div id="toContainer" class="flex-grow-0"></div>
+        <hr class="box-border m-1 border-blue-200 flex-grow-0">
+        <div class="flex flex-grow flex-col">
+            <textarea class="transition-all duration-700 bg-white bg-opacity-0 flex-grow w-full h-full box-border resize-none outline-none rounded border-blue-400 focus:border-green-400 border-2"
+                id="body"></textarea>
+            <div class="flex-grow-0" id="send"></div>
+        </div>
+        <p class="absolute top-0 right-0 p-1 cursor-default" id="closeNew">❌</p>
+    </div>
+
+    <div id="readLetter" class="flex flex-col popupGUI z-50">
+        <p class="flex-grow-0" id="from"></p>
+        <hr class="flex-grow-0">
+        <div class="flex h-full flex-col flex-grow-1 w-full p-1">
+            <div class="w-full flex-grow" id="bodyR"></div>
+            <div class="float-left flex-grow-0 flex w-full">
+                <div class="flex-grow-0" id="close"></div>
+                <div class="flex-grow inline bg-blue-100 my-2" id='replyMsgContainer'></div>
+                <div class="flex-grow-0" id='reply'></div>
+            </div>
+        </div>
+    </div>
+
+    <p id="msgStatus" class="fixed z-50 bottom-0 left-0"></p>
 
     <script src="main.js"></script>
 </body>

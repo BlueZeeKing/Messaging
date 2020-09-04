@@ -1,15 +1,16 @@
-var addNewLetterBtn = document.getElementById("newLetterBack"); // get the dom of some html elements
 var addNewLetterGUI = document.getElementById("newLetter");
 var msgStatus = document.getElementById("msgStatus");
-var to = document.getElementById("to");
 var body = document.getElementById("body");
 var readBody = document.getElementById('bodyR')
 var lettersObj = document.getElementById('letters')
+var backdrop = document.getElementById('backdrop')
 
 var currentStatus = 0; // set all the variables
 var letters = []
 var name;
 var open = false;
+
+var changeEvent = new Event('change')
 
 lettersObj.addEventListener('scroll', function () { // when the main body is scrolled
     if (lettersObj.scrollHeight - lettersObj.clientHeight == lettersObj.scrollTop) { // if it is scrolled all the way down remove the rounding at the bottom of the scroll bar
@@ -45,14 +46,14 @@ function clicked (e) { // make a function that handles when a letter is opened
     for (let i = 0; i < letter['body'].length; i++) {
         let msg = letter['body'][i].split('|');
         if (msg[0] == name) {
-            inner = inner + '<div class=\'containerN\'> <p class=\'name me\'>' + unformatName(msg[0]) + '</p> </div> <div class=\'container\'> <p class=\'me\'>' + msg[1] + '</p> </div>'
+            inner = inner + "<div class='text-right text-xs text-gray-600'>" + unformatName(msg[0]) + "</div><div class='text-right'>" + msg[1]+"</div>"
         } else {
-            inner = inner + '<div class=\'containerN\'> <p class=\'name other\'>' + unformatName(msg[0]) + '</p> </div> <div class=\'container\'> <p class=\'other\'>' + msg[1] + '</p></div>'
+            inner = inner + "<div class='text-left text-xs text-gray-600'>" + unformatName(msg[0]) + "</div><div class='text-left'>" + msg[1] + "</div>"
         }
     }
     readBody.innerHTML = inner;
 
-    document.getElementById('readLetter').style.transform = "translateY(0vh)"; // then move the divider that holds all the text up
+    openReadLetter()
     letter['read'] = '' // set the read to zero
     letters[i] = letter
     e.srcElement.innerHTML = letter['display'] + letter['read']
@@ -64,9 +65,9 @@ function display() { // create a function to display letters
         inner = '<p>No letters</p>'
     } else {
         for (let i = 0; i < letters.length - 1; i++) {
-            inner = inner + '<p class = \'letter\' id="' + 'i' + i.toString() + '">' + letters[i]['display'] + ' ' + letters[i]['read'] + '</p><hr>' // create a paragraph element for each letter that shows who it is from and if it has been read
+            inner = inner + '<p class = \'font-bold p-1\' id="' + 'i' + i.toString() + '">' + letters[i]['display'] + ' ' + letters[i]['read'] + '</p><hr class=\'mx-2 border-2 border-green-400\'>' // create a paragraph element for each letter that shows who it is from and if it has been read
         }
-        inner = inner + '<p class = \'letter\' id="' + 'i' + (letters.length - 1).toString() + '">' + letters[letters.length - 1]['display'] + letters[letters.length - 1]['read'] + '</p>' // create a paragraph element for the last letter that shows who it is from and if it has been read
+        inner = inner + '<p class = \'font-bold p-1\' id="' + 'i' + (letters.length - 1).toString() + '">' + letters[letters.length - 1]['display'] + letters[letters.length - 1]['read'] + '</p>' // create a paragraph element for the last letter that shows who it is from and if it has been read
     }
     document.getElementById('letters').innerHTML = inner;
 
@@ -75,43 +76,130 @@ function display() { // create a function to display letters
     }
 }
 
+function closeReadLetter() {
+    let animation = anime.timeline({
+        autoplay: true,
+        duration: 1000,
+        easing: 'easeInOutSine',
+        complete: function () {
+            backdrop.style.zIndex = '0'
+        }
+    });
+    animation.add({
+        targets: backdrop,
+        opacity: 0,
+        duration: 500
+    })
+    animation.add({
+        targets: document.getElementById('readLetter'),
+        translateY: '95vh',
+        duration: 500
+    })
+}
+
+function closeNewLetter() {
+    let animation = anime.timeline({
+        autoplay: true,
+        duration: 1000,
+        easing: 'easeInOutSine',
+        complete: function () {
+            backdrop.style.zIndex = '0'
+        }
+    });
+    animation.add({
+        targets: backdrop,
+        opacity: 0,
+        duration: 500
+    })
+    animation.add({
+        targets: document.getElementById('newLetter'),
+        translateY: '95vh',
+        duration: 500
+    })
+}
+
+function openReadLetter() {
+    let animation = anime.timeline({
+        autoplay: true,
+        duration: 1000,
+        easing: 'easeInOutSine',
+        begin: function () {
+            backdrop.style.zIndex = '40'
+        }
+    });
+    animation.add({
+        targets: document.getElementById('readLetter'),
+        translateY: ['91vh', '0vh'],
+        duration: 500
+    })
+    animation.add({
+        targets: backdrop,
+        opacity: 0.5,
+        duration: 500
+    })
+}
+
+function openNewLetter() {
+    let animation = anime.timeline({
+        autoplay: true,
+        duration: 1000,
+        easing: 'easeInOutSine',
+        begin: function () {
+            backdrop.style.zIndex = '40'
+        }
+    });
+    animation.add({
+        targets: document.getElementById('newLetter'),
+        translateY: ['91vh', '0vh'],
+        duration: 500
+    })
+    animation.add({
+        targets: backdrop,
+        opacity: 0.5,
+        duration: 500
+    })
+}
+
 function submitName () { // when you submit your name
     var socket = io.connect(window.location.href); // start the socket connection
     name = formatName(document.getElementById('name').value);
     socket.emit('login', name);
 
     socket.on('goodlogin', () => {
-        document.getElementById("namePrompt").style.opacity = "0"; // make the prompt disappear send the login message to the server and set the name variable
-
-        setTimeout(function () {
-            document.getElementById("namePrompt").style.transform = "translate(0,100vh)";
-        }, 600)
+        let animation = anime.timeline({
+            autoplay: true,
+            duration: 1000,
+            easing: 'easeInOutSine',
+            complete: function () {
+                document.getElementById("namePrompt").style.transform = "translate(0,100vh)";
+                backdrop.style.zIndex = '0'
+            }
+        });
+        animation.add({
+            targets: backdrop,
+            opacity: 0,
+            duration: 500
+        })
+        animation.add({
+            targets: document.getElementById("namePrompt"),
+            opacity: 0,
+            duration: 500
+        })
 
         document.getElementById("detector").addEventListener("click", function () { // when the new letter button is clicked make the button pretty and make the make a new letter gui pop up
-            addNewLetterBtn.className = "clicked";
-            addNewLetterGUI.style.transform = "translateY(0vh)";
-            setTimeout(function () {
-                addNewLetterBtn.style.opacity = "0";
-                setTimeout(function () {
-                    addNewLetterBtn.className = "notClicked";
-                    setTimeout(function () {
-                        addNewLetterBtn.style.opacity = "1";
-                    }, 550)
-                }, 550)
-            }, 800)
+            openNewLetter()
         });
 
         document.getElementById("send").addEventListener("click", function () { socket.emit('id') }); // send a message to the server to get the current message id
         to.addEventListener("keypress", function (e) { if (e.code == 'Enter') socket.emit('id') });
-        document.getElementById("body").addEventListener("keypress", function (e) { if (e.code == 'Enter') socket.emit('id') });
 
         document.getElementById("close").addEventListener("click", function () { // if the close button is clicked move the read letter gui down
-            document.getElementById('readLetter').style.transform = "translateY(95vh)";
+            closeReadLetter()
             open = false;
         });
 
         document.getElementById("closeNew").addEventListener("click", function () { // if the close button is clicked move the new letter gui down
-            document.getElementById('newLetter').style.transform = "translateY(95vh)";
+            closeNewLetter()
         });
 
         document.getElementById('reply').addEventListener('click', function () { // if the reply button is clicked
@@ -149,6 +237,7 @@ function submitName () { // when you submit your name
 
 
         socket.on('id', (data) => { // when the server responds to the id message 
+            console.log('send msg')
             let names = to.value.replace(', ', ',').split(',') // format the names to send to
             console.log(names)
             console.log(name)
@@ -176,9 +265,10 @@ function submitName () { // when you submit your name
                 display() // display all the messages
 
                 socket.emit('send', JSON.stringify(data)) // send the letter to the server
-                addNewLetterGUI.style.transform = "translateY(95vh)"; // move the new letter gui down
+                closeNewLetter()
                 setTimeout(function () { // erase the inputs after 0.6 seconds
                     to.value = '';
+                    ReactDOM.render(<TextInput placeholder="To" id="to" />, document.querySelector('#toContainer'));
                     body.value = '';
                 }, 600)
             } else if (names.length > 0) {
@@ -248,9 +338,9 @@ function submitName () { // when you submit your name
                             for (let i = 0; i < letter['body'].length; i++) {
                                 let msg = letter['body'][i].split('|');
                                 if (msg[0] == name) {
-                                    inner = inner + '<div class=\'containerN\'> <p class=\'name me\'>' + unformatName(msg[0]) + '</p> </div> <div class=\'container\'> <p class=\'me\'>' + msg[1] + '</p> </div>'
+                                    inner = inner + "<div class='text-right text-xs text-gray-600'>" + unformatName(msg[0]) + "</div><div class='text-right'>" + msg[1] + "</div>"
                                 } else {
-                                    inner = inner + '<div class=\'containerN\'> <p class=\'name other\'>' + unformatName(msg[0]) + '</p> </div> <div class=\'container\'> <p class=\'other\'>' + msg[1] + '</p></div>'
+                                    inner = inner + "<div class='text-left text-xs text-gray-600'>" + unformatName(msg[0]) + "</div><div class='text-left'>" + msg[1] + "</div>"
                                 }
                             }
                             readBody.innerHTML = inner;
@@ -325,6 +415,22 @@ function submitName () { // when you submit your name
         }, 3000)
     })
 }
+
+
+
+backdrop.style.width = window.innerWidth.toString() + 'px'
+backdrop.style.height = window.innerHeight.toString() + 'px'
+
+ReactDOM.render(<Button class="mx-0" name="Submit" />, document.querySelector('#submit'));
+ReactDOM.render(<Button name="Send" />, document.querySelector('#send'));
+ReactDOM.render(<Button name="Close" />, document.querySelector('#close'));
+ReactDOM.render(<Button name="Reply" />, document.querySelector('#reply'));
+
+ReactDOM.render(<TextInput placeholder="Name" id="name" />, document.querySelector('#nameContainer'));
+ReactDOM.render(<TextInput placeholder="To" id="to" />, document.querySelector('#toContainer'));
+ReactDOM.render(<TextInput placeholder="Reply" id="replyMsg" />, document.querySelector('#replyMsgContainer'));
+
+document.getElementById("to")
 
 document.getElementById("submit").addEventListener("click", submitName);
 document.getElementById("name").addEventListener("keypress", function (e) { if (e.code == 'Enter') submitName() });
