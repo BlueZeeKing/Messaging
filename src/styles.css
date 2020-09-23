@@ -27,7 +27,7 @@ button.clicked {
     height: 50%;
     top: 25%;
     right: 25%;
-    @apply text-center p-4 fixed box-border bottom-0 shadow rounded bg-blue-100
+    @apply text-center p-4 fixed box-border bottom-0 shadow rounded bg-blue-100 transition-opacity duration-500;
 }
 
 @media (max-width: 640px)  {
@@ -55,7 +55,7 @@ button.clicked {
 }
 
 .textPlaceholder {
-    @apply absolute left-0 text-gray-700 transition-all duration-500 z-0 noselect;
+    @apply absolute left-0 text-gray-700 transition-all duration-100 z-0 noselect;
 }
 
 .popupGUI {
@@ -63,7 +63,7 @@ button.clicked {
     width: 94vw;
     margin-left: 3vw;
     transform: translateY(91vh);
-    @apply fixed box-border bottom-0 p-2 pt-4 shadow rounded-t bg-blue-100
+    @apply fixed box-border bottom-0 p-2 pt-4 shadow rounded-t bg-blue-100 transition-all duration-500
 }
 
 .pencil {

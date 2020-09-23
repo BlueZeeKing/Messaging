@@ -60,26 +60,12 @@ class TextInput extends React.Component {
         if (e.target.value != '') {
             let moveover = (this.placeholder.current.offsetWidth - (this.placeholder.current.offsetWidth / 2)) / -2
             console.log(moveover)
-            anime({
-                targets: this.placeholder.current,
-                translateY: '-1rem',
-                translateX: moveover,
-                scale: .5,
-                color: '#a0aec0',
-                duration: 100,
-                easing: 'linear'
-            })
+            this.placeholder.current.style.transform = "translate("+moveover.toString()+"px, -1rem)  scale(0.5)"
+            this.placeholder.current.style.color = '#a0aec0'
             console.log('moveup')
         } else if (e.target.value == '') {
-            anime({
-                targets: this.placeholder.current,
-                translateY: '0rem',
-                translateX: 0,
-                scale: 1,
-                color: '#4a5568',
-                duration: 200,
-                easing: 'linear'
-            })
+            this.placeholder.current.style.transform = "translate(0, 0)  scale(1)"
+            this.placeholder.current.style.color = '#4a5568'
             console.log('movedown')
         }
         this.setState({})
@@ -88,29 +74,14 @@ class TextInput extends React.Component {
     render() {
         try {
             if (this.input.current.value != '') {
-                console.log("moveup")
                 let moveover = (this.placeholder.current.offsetWidth - (this.placeholder.current.offsetWidth / 2)) / -2
                 console.log(moveover)
-                anime({
-                    targets: this.placeholder.current,
-                    translateY: '-1rem',
-                    translateX: moveover,
-                    scale: .5,
-                    color: '#a0aec0',
-                    duration: 100,
-                    easing: 'linear'
-                })
+                this.placeholder.current.style.transform = "translate("+moveover.toString()+"px, -1rem) scale(0.5)"
+                this.placeholder.current.style.color = '#a0aec0'
                 console.log('moveup')
-            } else if (this.input.current.value == '') {
-                anime({
-                    targets: this.placeholder.current,
-                    translateY: '0rem',
-                    translateX: 0,
-                    scale: 1,
-                    color: '#4a5568',
-                    duration: 200,
-                    easing: 'linear'
-                })
+            } else if (e.target.value == '') {
+                this.placeholder.current.style.transform = "translate(0, 0) scale(1)"
+                this.placeholder.current.style.color = '#4a5568'
                 console.log('movedown')
             }
         } catch (e) { console.log(e) }

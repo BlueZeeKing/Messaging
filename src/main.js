@@ -77,87 +77,35 @@ function display() { // create a function to display letters
 }
 
 function closeReadLetter() {
-    let animation = anime.timeline({
-        autoplay: true,
-        duration: 1000,
-        easing: 'easeInOutSine',
-        complete: function () {
-            backdrop.style.zIndex = '0'
-        }
-    });
-    animation.add({
-        targets: backdrop,
-        opacity: 0,
-        duration: 500
-    })
-    animation.add({
-        targets: document.getElementById('readLetter'),
-        translateY: '95vh',
-        duration: 500
-    })
+    backdrop.style.opacity = "0"
+    setTimeout(function () {
+        document.getElementById('readLetter').style.transform = "translateY(95vh)"
+        setTimeout(function () { backdrop.style.zIndex = '0' }, 500)
+    }, 500)
 }
 
 function closeNewLetter() {
-    let animation = anime.timeline({
-        autoplay: true,
-        duration: 1000,
-        easing: 'easeInOutSine',
-        complete: function () {
-            backdrop.style.zIndex = '0'
-        }
-    });
-    animation.add({
-        targets: backdrop,
-        opacity: 0,
-        duration: 500
-    })
-    animation.add({
-        targets: document.getElementById('newLetter'),
-        translateY: '95vh',
-        duration: 500
-    })
+    backdrop.style.opacity = "0"
+    setTimeout(function () {
+        document.getElementById('newLetter').style.transform = "translateY(95vh)"
+        setTimeout(function () { backdrop.style.zIndex = '0' }, 500)
+    }, 500)
 }
 
 function openReadLetter() {
-    let animation = anime.timeline({
-        autoplay: true,
-        duration: 1000,
-        easing: 'easeInOutSine',
-        begin: function () {
-            backdrop.style.zIndex = '40'
-        }
-    });
-    animation.add({
-        targets: document.getElementById('readLetter'),
-        translateY: ['91vh', '0vh'],
-        duration: 500
-    })
-    animation.add({
-        targets: backdrop,
-        opacity: 0.5,
-        duration: 500
-    })
+    backdrop.style.zIndex = '40'
+    document.getElementById('readLetter').style.transform = "translateY(0vh)"
+    setTimeout(function () {
+        backdrop.style.opacity = "0.5"
+    }, 500)
 }
 
 function openNewLetter() {
-    let animation = anime.timeline({
-        autoplay: true,
-        duration: 1000,
-        easing: 'easeInOutSine',
-        begin: function () {
-            backdrop.style.zIndex = '40'
-        }
-    });
-    animation.add({
-        targets: document.getElementById('newLetter'),
-        translateY: ['91vh', '0vh'],
-        duration: 500
-    })
-    animation.add({
-        targets: backdrop,
-        opacity: 0.5,
-        duration: 500
-    })
+    backdrop.style.zIndex = '40'
+    document.getElementById('newLetter').style.transform = "translateY(0vh)"
+    setTimeout(function () {
+        backdrop.style.opacity = "0.5"
+    }, 500)
 }
 
 function submitName () { // when you submit your name
@@ -166,25 +114,12 @@ function submitName () { // when you submit your name
     socket.emit('login', name);
 
     socket.on('goodlogin', () => {
-        let animation = anime.timeline({
-            autoplay: true,
-            duration: 1000,
-            easing: 'easeInOutSine',
-            complete: function () {
-                document.getElementById("namePrompt").style.transform = "translate(0,100vh)";
-                backdrop.style.zIndex = '0'
-            }
-        });
-        animation.add({
-            targets: backdrop,
-            opacity: 0,
-            duration: 500
-        })
-        animation.add({
-            targets: document.getElementById("namePrompt"),
-            opacity: 0,
-            duration: 500
-        })
+
+        backdrop.style.opacity = "0"
+        setTimeout(function () {
+            document.getElementById("namePrompt").style.opacity = "0"
+            setTimeout(function () { backdrop.style.zIndex = '0' }, 500)
+        }, 500)
 
         document.getElementById("detector").addEventListener("click", function () { // when the new letter button is clicked make the button pretty and make the make a new letter gui pop up
             openNewLetter()
@@ -260,7 +195,7 @@ function submitName () { // when you submit your name
                 for (let i = 0; i < letters.length; i++) { // for each letter remove the event listener
                     try {
                         document.getElementById('i' + i.toString()).removeEventListener('click', clicked)
-                    } catch { }
+                    } catch (e) { }
                 }
                 display() // display all the messages
 
