@@ -586,8 +586,39 @@ video {
   height: auto;
 }
 
+html {
+  font-family: 'Nunito', sans-serif;
+}
+
 p {
   padding: 0.25rem
+}
+
+textarea {
+  --bg-opacity: 1;
+  background-color: #e2e8f0;
+  background-color: rgba(226, 232, 240, var(--bg-opacity));
+  --bg-opacity: 0;
+  --border-opacity: 1;
+  border-color: #3182ce;
+  border-color: rgba(49, 130, 206, var(--border-opacity));
+  border-radius: 0.5rem;
+  resize: none;
+  padding: 0.25rem;
+  outline: 0;
+  transition-property: all;
+  transition-duration: 700ms;
+  border-width: 2px
+}
+
+textarea:focus {
+  transform: scale(1.01);
+  --border-opacity: 1;
+  border-color: #38a169;
+  border-color: rgba(56, 161, 105, var(--border-opacity));
+  --bg-opacity: 1;
+  background-color: #e6fffa;
+  background-color: rgba(230, 255, 250, var(--bg-opacity))
 }
 
 button {
@@ -622,10 +653,16 @@ button:disabled {
 }
 
 button:focus {
+  --bg-opacity: 1;
+  background-color: #4299e1;
+  background-color: rgba(66, 153, 225, var(--bg-opacity));
+  --text-opacity: 1;
+  color: #fff;
+  color: rgba(255, 255, 255, var(--text-opacity));
   outline: 0;
 }
 
-button.clicked {
+button:active {
   --bg-opacity: 1;
   background-color: #4299e1;
   background-color: rgba(66, 153, 225, var(--bg-opacity));
@@ -691,57 +728,6 @@ button.clicked {
   }
 }
 
-.modalHeader {
-  font-weight: 700;
-  font-size: 1.125rem;
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
-}
-
-.modalBody {
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
-}
-
-.text {
-  --border-opacity: 1;
-  border-color: #4299e1;
-  border-color: rgba(66, 153, 225, var(--border-opacity));
-  border-bottom-width: 2px;
-  --bg-opacity: 1;
-  background-color: #fff;
-  background-color: rgba(255, 255, 255, var(--bg-opacity));
-  transition-property: all;
-  position: relative;
-  transition-duration: 500ms;
-  z-index: 10;
-  --bg-opacity: 0;
-  border-radius: 0;
-}
-
-.text:focus {
-  --border-opacity: 1;
-  border-color: #48bb78;
-  border-color: rgba(72, 187, 120, var(--border-opacity));
-  outline: 0;
-}
-
-.textPlaceholder {
-  position: absolute;
-  left: 0;
-  --text-opacity: 1;
-  color: #4a5568;
-  color: rgba(74, 85, 104, var(--text-opacity));
-  transition-property: all;
-  transition-duration: 500ms;
-  z-index: 0;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
 .popupGUI {
   height: 91vh;
   width: 94vw;
@@ -765,6 +751,31 @@ button.clicked {
 .pencil {
   -webkit-clip-path: polygon(0% 0%, 100% 0%, 100% 80%, 50% 100%, 0% 80%);
           clip-path: polygon(0% 0%, 100% 0%, 100% 80%, 50% 100%, 0% 80%);
+}
+
+.text_input {
+  outline: 0;
+  border-width: 0;
+  border-bottom-width: 2px;
+  --border-opacity: 1;
+  border-color: #3182ce;
+  border-color: rgba(49, 130, 206, var(--border-opacity));
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+  margin: 0.5rem;
+  transition-property: all;
+  transition-duration: 500ms;
+  --bg-opacity: 1;
+  background-color: #fff;
+  background-color: rgba(255, 255, 255, var(--bg-opacity));
+  --bg-opacity: 0
+}
+
+.text_input:focus {
+  transform: scale(1.03);
+  --border-opacity: 1;
+  border-color: #48bb78;
+  border-color: rgba(72, 187, 120, var(--border-opacity))
 }
 
 .space-y-0 > :not(template) ~ :not(template) {

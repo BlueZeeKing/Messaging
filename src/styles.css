@@ -1,7 +1,20 @@
 @tailwind base;
 
+html {
+    font-family: 'Nunito', sans-serif;
+}
+
 p {
     @apply p-1
+}
+
+textarea {
+    @apply bg-gray-300 bg-opacity-0 border-blue-600 rounded-lg resize-none p-2 outline-none transition-all duration-700 border-2
+}
+
+textarea:focus {
+    transform: scale(1.01);
+    @apply border-green-600 bg-teal-100
 }
 
 button {
@@ -13,10 +26,10 @@ button:disabled {
 }
 
 button:focus {
-    @apply outline-none;
+    @apply bg-blue-500 text-white outline-none;
 }
 
-button.clicked {
+button:active {
     @apply bg-blue-500 text-white outline-none;
 }
 
@@ -39,25 +52,6 @@ button.clicked {
     }
 }
 
-.modalHeader {
-    @apply font-bold text-lg py-1;
-}
-.modalBody {
-    @apply py-1;
-}
-
-.text {
-    @apply border-blue-500 border-b-2 bg-white transition-all relative duration-500 z-10 bg-opacity-0 rounded-none;
-}
-
-.text:focus {
-    @apply border-green-500 outline-none;
-}
-
-.textPlaceholder {
-    @apply absolute left-0 text-gray-700 transition-all duration-100 z-0 noselect;
-}
-
 .popupGUI {
     height: 91vh;
     width: 94vw;
@@ -68,6 +62,15 @@ button.clicked {
 
 .pencil {
     clip-path: polygon(0% 0%, 100% 0%, 100% 80%, 50% 100%, 0% 80%);
+}
+
+.text_input {
+    @apply outline-none border-0 border-b-2 border-blue-600 px-1 m-2 transition-all duration-500 bg-white bg-opacity-0
+}
+
+.text_input:focus {
+    transform: scale(1.03);
+    @apply border-green-500 
 }
 
 @tailwind utilities;

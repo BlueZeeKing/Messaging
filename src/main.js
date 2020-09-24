@@ -356,15 +356,6 @@ function submitName () { // when you submit your name
 backdrop.style.width = window.innerWidth.toString() + 'px'
 backdrop.style.height = window.innerHeight.toString() + 'px'
 
-ReactDOM.render(<Button class="mx-0" name="Submit" />, document.querySelector('#submit'));
-ReactDOM.render(<Button name="Send" />, document.querySelector('#send'));
-ReactDOM.render(<Button name="Close" />, document.querySelector('#close'));
-ReactDOM.render(<Button name="Reply" />, document.querySelector('#reply'));
-
-ReactDOM.render(<TextInput placeholder="Name" id="name" />, document.querySelector('#nameContainer'));
-ReactDOM.render(<TextInput placeholder="To" id="to" />, document.querySelector('#toContainer'));
-ReactDOM.render(<TextInput placeholder="Reply" id="replyMsg" />, document.querySelector('#replyMsgContainer'));
-
 document.getElementById("to")
 
 document.getElementById("submit").addEventListener("click", submitName);
