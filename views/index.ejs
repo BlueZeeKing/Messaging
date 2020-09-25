@@ -1,50 +1,60 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="font-size: 24px">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Messaging</title>
-    <meta name="color-scheme" content="dark light">
+    <!--<meta name="color-scheme" content="dark light">-->
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=MuseoModerno:wght@400;600&display=swap" media="(prefers-color-scheme: light)"rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=MuseoModerno:wght@300;500&display=swap" media="(prefers-color-scheme: dark)" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
     <script src="/socket.io/socket.io.js"></script>
+    <meta name="color-scheme" content="dark light">
 </head>
-<body>
+<body class="bg-green-200 bg-green-1000 overflow-hidden">
 
-    <div id='letters'>
+    <div id="backdrop" class="bg-black z-40 opacity-50 fixed bottom-0 right-0 transition-opacity duration-500"></div>
+
+    <div id='letters' class="overflow-auto h-full relative z-10">
         <p>No letters</p>
     </div>
 
-    <div id="newLetterBtn">
-        <div id="newLetterBack" class="notClicked"></div>
-        <div id="detector"></div>
-        <div class="pencil"></div>
+    <div tabindex="0" id="detector" class="m-2 fixed bottom-0 z-30 right-0 outline-none transition-all duration-500 bg-blue-500 focus:bg-teal-500 shadow-lg focus:shadow-sm w-16 h-16 focus-scale rounded-full">
+        <div class="px-65 py-2 h-full w-full">
+            <div class="pencil h-full w-full bg-black dark:bg-white"></div>
+        </div>
     </div>
 
-    <div id="namePrompt">
-        Name: <input id="name" type="text">
-        <div></div>
-        <button id="submit">Submit!</button>
-    </div>
-
-    <div id="newLetter">
-        To: <input id="to" type="text">
+    <div id="namePrompt" class="modal z-50">
+        <input class="text_input" id="name" name="name" placeholder="Name">
         <br>
-        <hr>
-        <textarea id="body"></textarea>
-        <button id="send">Send!</button>
-        <p id="closeNew">❌</p>
+        <button id="submit" name="submit">Submit</button>
     </div>
 
-    <div id="readLetter">
-        <p id="from"></p>
-        <hr>
-        <div id="bodyR"></div>
-        <button id="close">Close</button><button id='reply'>Reply</button><input name="reply" id='replyMsg'>
+    <div id="newLetter" class="flex flex-col popupGUI z-50">
+        <input class="text_input" id="to" name="to" placeholder="To" class="flex-grow-0">
+        <hr class="box-border m-1 border-blue-200 flex-grow-0">
+        <div class="flex flex-grow flex-col">
+            <textarea class="flex-grow w-full h-full"
+                id="body" name="body"></textarea>
+            <button class="flex-grow-0" id="send" name="send">Send</button>
+        </div>
+        <p class="absolute top-0 right-0 p-1 cursor-default" id="closeNew">❌</p>
     </div>
 
-    <p id="msgStatus"></p>
+    <div id="readLetter" class="flex flex-col popupGUI z-50">
+        <p class="flex-grow-0" id="from"></p>
+        <hr class="flex-grow-0">
+        <div class="flex h-full flex-col flex-grow-1 w-full p-1">
+            <div class="w-full flex-grow" id="bodyR"></div>
+            <div class="float-left flex-grow-0 flex w-full">
+                <button class="flex-grow-0" id="close" name="close">Close</button>
+                <input class="text_input" class="flex-grow inline" placeholder="reply" id='replyMsg'>
+                <button class="flex-grow-0" id="reply" name="reply">Reply</button>
+            </div>
+        </div>
+    </div>
+
+    <p id="msgStatus" class="fixed z-50 bottom-0 left-0"></p>
 
     <script src="main.js"></script>
 </body>
