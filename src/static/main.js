@@ -400,9 +400,6 @@ function submitName() {
     }
 }
 
-backdrop.style.width = window.innerWidth.toString() + 'px'; // make the backdrop the right size
-backdrop.style.height = window.innerHeight.toString() + 'px';
-
 document.getElementById("submit").addEventListener("click", submitName); // bind the submit button to the submitName function
 document.getElementById("name").addEventListener("keypress", function (e) { // bind the enter key to the submitName function
     if (e.code == 'Enter') submitName();
