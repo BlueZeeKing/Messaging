@@ -45,7 +45,7 @@ function unformatName(name) {
 
 function clicked(e) {
     // make a function that handles when a letter is opened
-    i = e['srcElement'].id.slice(1); // if it has get the id of the letter and display who the letter is from
+    let i = e['srcElement'].id.slice(1); // if it has get the id of the letter and display who the letter is from
     var letter = letters[i];
     open = letter['id'];
 
@@ -75,7 +75,7 @@ function display() {
         inner = '<p>No letters</p>';
     } else {
         for (var _i3 = 0; _i3 < letters.length - 1; _i3++) {
-            inner = inner + '<p class = \'font-bold p-1\' id="' + 'i' + _i3.toString() + '">' + letters[_i3]['display'] + ' ' + letters[_i3]['read'] + '</p><hr class=\'mx-2 border-2 border-green-400\'>'; // create a paragraph element for each letter that shows who it is from and if it has been read
+            inner = inner + '<p class = \'font-bold p-1\' id="' + 'i' + _i3.toString() + '">' + letters[_i3]['display'] + ' ' + letters[_i3]['read'] + '</p><hr class=\'mx-2 border-1 border-green-400 dark:border-green-700\'>'; // create a paragraph element for each letter that shows who it is from and if it has been read
         }
         inner = inner + '<p class = \'font-bold p-1\' id="' + 'i' + (letters.length - 1).toString() + '">' + letters[letters.length - 1]['display'] + letters[letters.length - 1]['read'] + '</p>'; // create a paragraph element for the last letter that shows who it is from and if it has been read
     }
@@ -252,7 +252,6 @@ function submitName() {
                     setTimeout(function () {
                         // erase the inputs after 0.6 seconds
                         to.value = '';
-                        ReactDOM.render(React.createElement(TextInput, { placeholder: "To", id: "to" }), document.querySelector('#toContainer'));
                         body.value = '';
                     }, 600);
                 } else if (names.length > 0) {

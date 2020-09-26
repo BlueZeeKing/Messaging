@@ -127,3 +127,7 @@ button:active {
 .bg-blue-1000 {
     background-color: rgb(13, 13, 27);
 }
+
+.border-1 {
+    border-width: 1px;
+}

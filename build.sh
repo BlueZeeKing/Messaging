@@ -9,8 +9,10 @@ cleancss build/src/tailwind.css -o build/static/styles.min.css
 terser build/static/main.js -o build/static/main.min.js -m -c
 
 sed -i '.bak' 's/styles.css/styles.min.css/g' build/views/index.ejs
+sed -i 's/styles.css/styles.min.css/g' build/views/index.ejs
 
 rm -rf build/src
 rm build/static/main.js
 rm build/static/styles.css
-rm build/views/index.ejs.bak
+rm build/views/index.ejs
+rm build/tailwind.config.css
