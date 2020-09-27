@@ -35,7 +35,7 @@ function formatName(name) {
 function unformatName(name) {
     // create a function that capitalizes the first letter of every word
     let names = name.split(" ");
-    for (var i = 0; i < names.length; i++) {
+    for (let i = 0; i < names.length; i++) {
         names[i] = names[i][0].toUpperCase() + names[i].substring(1, names[i].length);
     }
     return names.join(' ');
@@ -50,7 +50,7 @@ function clicked(e) {
     document.getElementById('from').innerHTML = letters[i]['display'];
 
     let inner = ''; // and display all the messages in the body of the message
-    for (var i = 0; i < letter['body'].length; i++) {
+    for (let i = 0; i < letter['body'].length; i++) {
         let msg = letter['body'][i].split('|');
         if (msg[0] == name) {
             inner = inner + "<div class='text-right text-xs text-gray-600'>" + unformatName(msg[0]) + "</div><div class='text-right'>" + msg[1] + "</div>";
@@ -72,14 +72,14 @@ function display() {
     if (letters.length <= 0) {
         inner = '<p>No letters</p>';
     } else {
-        for (var i = 0; i < letters.length - 1; i++) {
+        for (let i = 0; i < letters.length - 1; i++) {
             inner = inner + '<p class = \'font-bold p-1\' id="' + 'i' + i.toString() + '">' + letters[i]['display'] + ' ' + letters[i]['read'] + '</p><hr class=\'mx-2 border-1 border-green-400 dark:border-green-700\'>'; // create a paragraph element for each letter that shows who it is from and if it has been read
         }
         inner = inner + '<p class = \'font-bold p-1\' id="' + 'i' + (letters.length - 1).toString() + '">' + letters[letters.length - 1]['display'] + letters[letters.length - 1]['read'] + '</p>'; // create a paragraph element for the last letter that shows who it is from and if it has been read
     }
     document.getElementById('letters').innerHTML = inner;
 
-    for (var i = 0; i < letters.length; i++) {
+    for (let i = 0; i < letters.length; i++) {
         // for each letter add an event listener that checks if it has been clicked
         document.getElementById('i' + i.toString()).addEventListener('click', clicked);
     }
@@ -183,7 +183,7 @@ function submitName() {
                 // if the reply button is clicked
                 if (document.getElementById('replyMsg').value != '') {
                     let letter; // get the open letter
-                    for (var i = 0; i < letters.length; i++) {
+                    for (let i = 0; i < letters.length; i++) {
                         if (letters[i]['id'] == open) {
                             letter = letters[i];
                         }
@@ -199,7 +199,7 @@ function submitName() {
                 // if the reply button is clicked
                 if (e.code == 'Enter' && document.getElementById('replyMsg').value != '') {
                     let letter; // get the open letter
-                    for (var i = 0; i < letters.length; i++) {
+                    for (let i = 0; i < letters.length; i++) {
                         if (letters[i]['id'] == open) {
                             letter = letters[i];
                         }
@@ -223,7 +223,7 @@ function submitName() {
                 }
                 console.log(names);
                 if (names.length > 0 && body.value != '') {
-                    for (var i = 0; i < names.length; i++) {
+                    for (let i = 0; i < names.length; i++) {
                         names[i] = formatName(names[i]);
                     }
 
@@ -235,7 +235,7 @@ function submitName() {
                     }
                     letters.unshift(data); // add the message data to the letters
 
-                    for (var i = 0; i < letters.length; i++) {
+                    for (let i = 0; i < letters.length; i++) {
                         // for each letter remove the event listener
                         try {
                             document.getElementById('i' + i.toString()).removeEventListener('click', clicked);
@@ -277,7 +277,7 @@ function submitName() {
                 let status = { name: data['from'], id: data.id };
                 try {
                     // use try to catch errors
-                    for (var i = 0; i < letters.length; i++) {
+                    for (let i = 0; i < letters.length; i++) {
                         // for each letter remove the event listener
                         document.getElementById('i' + i.toString()).removeEventListener('click', clicked);
                     }
@@ -362,7 +362,7 @@ function submitName() {
                         msgStatus.innerHTML = '✅ Delivered';
                         currentStatus = 200;
                     } else if (data.status == 404) {
-                        for (var i = 0; i < letters.length; i++) {
+                        for (let i = 0; i < letters.length; i++) {
                             if (letters[i].id == data.id && letters[i].to.length == 1) {
                                 letters.splice(i, 1);
                                 display();
