@@ -1,5 +1,3 @@
-"use strict";
-
 var addNewLetterGUI = document.getElementById("newLetter");
 var msgStatus = document.getElementById("msgStatus");
 var body = document.getElementById("body");
@@ -36,9 +34,9 @@ function formatName(name) {
 
 function unformatName(name) {
     // create a function that capitalizes the first letter of every word
-    var names = name.split(" ");
-    for (var _i = 0; _i < names.length; _i++) {
-        names[_i] = names[_i][0].toUpperCase() + names[_i].substring(1, names[_i].length);
+    let names = name.split(" ");
+    for (var i = 0; i < names.length; i++) {
+        names[i] = names[i][0].toUpperCase() + names[i].substring(1, names[i].length);
     }
     return names.join(' ');
 }
@@ -46,14 +44,14 @@ function unformatName(name) {
 function clicked(e) {
     // make a function that handles when a letter is opened
     let i = e['srcElement'].id.slice(1); // if it has get the id of the letter and display who the letter is from
-    var letter = letters[i];
+    let letter = letters[i];
     open = letter['id'];
 
     document.getElementById('from').innerHTML = letters[i]['display'];
 
-    var inner = ''; // and display all the messages in the body of the message
-    for (var _i2 = 0; _i2 < letter['body'].length; _i2++) {
-        var msg = letter['body'][_i2].split('|');
+    let inner = ''; // and display all the messages in the body of the message
+    for (var i = 0; i < letter['body'].length; i++) {
+        let msg = letter['body'][i].split('|');
         if (msg[0] == name) {
             inner = inner + "<div class='text-right text-xs text-gray-600'>" + unformatName(msg[0]) + "</div><div class='text-right'>" + msg[1] + "</div>";
         } else {
@@ -70,20 +68,20 @@ function clicked(e) {
 
 function display() {
     // create a function to display letters
-    var inner = ''; // set the inner part of the letters div element 
+    let inner = ''; // set the inner part of the letters div element 
     if (letters.length <= 0) {
         inner = '<p>No letters</p>';
     } else {
-        for (var _i3 = 0; _i3 < letters.length - 1; _i3++) {
-            inner = inner + '<p class = \'font-bold p-1\' id="' + 'i' + _i3.toString() + '">' + letters[_i3]['display'] + ' ' + letters[_i3]['read'] + '</p><hr class=\'mx-2 border-1 border-green-400 dark:border-green-700\'>'; // create a paragraph element for each letter that shows who it is from and if it has been read
+        for (var i = 0; i < letters.length - 1; i++) {
+            inner = inner + '<p class = \'font-bold p-1\' id="' + 'i' + i.toString() + '">' + letters[i]['display'] + ' ' + letters[i]['read'] + '</p><hr class=\'mx-2 border-1 border-green-400 dark:border-green-700\'>'; // create a paragraph element for each letter that shows who it is from and if it has been read
         }
         inner = inner + '<p class = \'font-bold p-1\' id="' + 'i' + (letters.length - 1).toString() + '">' + letters[letters.length - 1]['display'] + letters[letters.length - 1]['read'] + '</p>'; // create a paragraph element for the last letter that shows who it is from and if it has been read
     }
     document.getElementById('letters').innerHTML = inner;
 
-    for (var _i4 = 0; _i4 < letters.length; _i4++) {
+    for (var i = 0; i < letters.length; i++) {
         // for each letter add an event listener that checks if it has been clicked
-        document.getElementById('i' + _i4.toString()).addEventListener('click', clicked);
+        document.getElementById('i' + i.toString()).addEventListener('click', clicked);
     }
 }
 
@@ -184,16 +182,15 @@ function submitName() {
             document.getElementById('reply').addEventListener('click', function () {
                 // if the reply button is clicked
                 if (document.getElementById('replyMsg').value != '') {
-                    var letter = void 0; // get the open letter
-                    for (var _i5 = 0; _i5 < letters.length; _i5++) {
-                        if (letters[_i5]['id'] == open) {
-                            letter = letters[_i5];
+                    let letter; // get the open letter
+                    for (var i = 0; i < letters.length; i++) {
+                        if (letters[i]['id'] == open) {
+                            letter = letters[i];
                         }
                     }
 
-                    var data = { users: letter['to'].concat(letter['from']), from: name, id: letter['id'], reply: document.getElementById('replyMsg').value // create the data 
-
-                    };document.getElementById('replyMsg').value = ''; // reset the input
+                    let data = { users: letter['to'].concat(letter['from']), from: name, id: letter['id'], reply: document.getElementById('replyMsg').value }; // create the data
+                    document.getElementById('replyMsg').value = ''; // reset the input
 
                     socket.emit('reply', JSON.stringify(data)); // send the data
                 }
@@ -201,16 +198,15 @@ function submitName() {
             document.getElementById('replyMsg').addEventListener('keypress', function (e) {
                 // if the reply button is clicked
                 if (e.code == 'Enter' && document.getElementById('replyMsg').value != '') {
-                    var letter = void 0; // get the open letter
-                    for (var _i6 = 0; _i6 < letters.length; _i6++) {
-                        if (letters[_i6]['id'] == open) {
-                            letter = letters[_i6];
+                    let letter; // get the open letter
+                    for (var i = 0; i < letters.length; i++) {
+                        if (letters[i]['id'] == open) {
+                            letter = letters[i];
                         }
                     }
 
-                    var data = { users: letter['to'].concat(letter['from']), from: name, id: letter['id'], reply: document.getElementById('replyMsg').value // create the data 
-
-                    };document.getElementById('replyMsg').value = ''; // reset the input
+                    let data = { users: letter['to'].concat(letter['from']), from: name, id: letter['id'], reply: document.getElementById('replyMsg').value }; // create the data
+                    document.getElementById('replyMsg').value = ''; // reset the input
 
                     socket.emit('reply', JSON.stringify(data)); // send the data
                 }
@@ -219,7 +215,7 @@ function submitName() {
             socket.on('id', function (data) {
                 // when the server responds to the id message 
                 console.log('send msg');
-                var names = to.value.replace(', ', ',').split(','); // format the names to send to
+                let names = to.value.replace(', ', ',').split(','); // format the names to send to
                 console.log(names);
                 console.log(name);
                 if (names.includes(name)) {
@@ -227,22 +223,22 @@ function submitName() {
                 }
                 console.log(names);
                 if (names.length > 0 && body.value != '') {
-                    for (var _i7 = 0; _i7 < names.length; _i7++) {
-                        names[_i7] = formatName(names[_i7]);
+                    for (var i = 0; i < names.length; i++) {
+                        names[i] = formatName(names[i]);
                     }
 
-                    data = { display: 'To: ' + to.value.replace(',', ', '), from: name, to: names, body: [name + '|' + body.value], read: '', id: data //  create the message data
+                    data = { display: 'To: ' + to.value.replace(',', ', '), from: name, to: names, body: [name + '|' + body.value], read: '', id: data }; //  create the message data
 
-                    };if (letters.length >= 15) {
+                    if (letters.length >= 15) {
                         // delete a message if there are too many
                         letters.splice(14, 10);
                     }
                     letters.unshift(data); // add the message data to the letters
 
-                    for (var _i8 = 0; _i8 < letters.length; _i8++) {
+                    for (var i = 0; i < letters.length; i++) {
                         // for each letter remove the event listener
                         try {
-                            document.getElementById('i' + _i8.toString()).removeEventListener('click', clicked);
+                            document.getElementById('i' + i.toString()).removeEventListener('click', clicked);
                         } catch (e) {}
                     }
                     display(); // display all the messages
@@ -277,13 +273,13 @@ function submitName() {
 
             socket.on('recieve', function (dataRaw) {
                 // when a message is recieved
-                var data = JSON.parse(dataRaw); // parse the data and create a variable for the status
-                var status = { name: data['from'], id: data.id };
+                let data = JSON.parse(dataRaw); // parse the data and create a variable for the status
+                let status = { name: data['from'], id: data.id };
                 try {
                     // use try to catch errors
-                    for (var _i9 = 0; _i9 < letters.length; _i9++) {
+                    for (var i = 0; i < letters.length; i++) {
                         // for each letter remove the event listener
-                        document.getElementById('i' + _i9.toString()).removeEventListener('click', clicked);
+                        document.getElementById('i' + i.toString()).removeEventListener('click', clicked);
                     }
 
                     data['read'] = ' 🔵'; // set the read component of the data to a blue circle to represeent it is not read
@@ -308,24 +304,23 @@ function submitName() {
             });
 
             socket.on('reply', function (dataRaw) {
-                var data = JSON.parse(dataRaw); // get the data sent
-                var status = { name: data['from'] // create the status var
-
-                };try {
-                    for (var _i10 = 0; _i10 < letters.length; _i10++) {
+                let data = JSON.parse(dataRaw); // get the data sent
+                let status = { name: data['from'] }; // create the status var
+                try {
+                    for (let i = 0; i < letters.length; i++) {
                         // find the correct letter
-                        if (data['id'] == letters[_i10]['id']) {
-                            var letter = letters[_i10];
+                        if (data['id'] == letters[i]['id']) {
+                            let letter = letters[i];
 
                             letter['body'].push(data['from'] + '|' + data['reply']); // add the reply to the letter
 
                             if (open == data['id']) {
                                 // if the letter is open display it
                                 letter['read'] = '';
-                                document.getElementById('i' + _i10).innerHTML = letter['display'] + letter['read'];
-                                var inner = '';
-                                for (var _i11 = 0; _i11 < letter['body'].length; _i11++) {
-                                    var msg = letter['body'][_i11].split('|');
+                                document.getElementById('i' + i).innerHTML = letter['display'] + letter['read'];
+                                let inner = '';
+                                for (let i = 0; i < letter['body'].length; i++) {
+                                    var msg = letter['body'][i].split('|');
                                     if (msg[0] == name) {
                                         inner = inner + "<div class='text-right text-xs text-gray-600'>" + unformatName(msg[0]) + "</div><div class='text-right'>" + msg[1] + "</div>";
                                     } else {
@@ -341,9 +336,9 @@ function submitName() {
                             } else {
                                 // otherwise set the read var to un read
                                 letter['read'] = ' 🔵';
-                                document.getElementById('i' + _i10).innerHTML = letter['display'] + letter['read']; // show the change
+                                document.getElementById('i' + i).innerHTML = letter['display'] + letter['read']; // show the change
                             }
-                            letters[_i10] = letter; // update the new letter
+                            letters[i] = letter; // update the new letter
                         }
                     }
 
@@ -358,23 +353,23 @@ function submitName() {
 
             socket.on('msgStatus', function (rawData) {
                 // if a message status message is received
-                var data = JSON.parse(rawData);
+                let data = JSON.parse(rawData);
                 console.log(rawData);
                 if (currentStatus != 400 && currentStatus != 404) {
                     // if a faliure message was not already received
                     if (data.status == 200) {
-                        // if the status is something set the current statis and set the message status variable
+                        // if the status is something set the current status and set the message status variable
                         msgStatus.innerHTML = '✅ Delivered';
                         currentStatus = 200;
                     } else if (data.status == 404) {
-                        for (var _i12 = 0; _i12 < letters.length; _i12++) {
-                            if (letters[_i12].id == data.id && letters[_i12].to.length == 1) {
-                                letters.splice(_i12, 1);
+                        for (var i = 0; i < letters.length; i++) {
+                            if (letters[i].id == data.id && letters[i].to.length == 1) {
+                                letters.splice(i, 1);
                                 display();
-                            } else if (letters[_i12].id == data.id) {
-                                letters[_i12].to.splice(letters[_i12].to.indexOf(data.user));
-                                letters[_i12].display = 'To: ' + letters[_i12].to;
-                                console.log(letters[_i12]);
+                            } else if (letters[i].id == data.id) {
+                                letters[i].to.splice(letters[i].to.indexOf(data.user));
+                                letters[i].display = 'To: ' + letters[i].to;
+                                console.log(letters[i]);
                                 display();
                             }
                         }
