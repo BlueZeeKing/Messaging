@@ -26,10 +26,10 @@ io.on('connection', (socket) => { // when a user connects
     let name // set the name variable
 
     socket.on('login', (data) => { // when a login message is recieved
-        if (data.includes('|') || users.includes(data)) {
+        if (data.includes('|') || users.includes(data)) { // if the name is bad return bad
             socket.emit('badlogin')
         } else {
-            em.addListener(data, function (data) { // create a event listener to recieve messages and message status alerts
+            em.addListener(data, function (data) { // create a event listener to recieve messages, replies and message status alerts 
                 socket.emit('recieve', data)
             })
             em.addListener(data + 'status', function (data) {
@@ -37,7 +37,6 @@ io.on('connection', (socket) => { // when a user connects
             })
             em.addListener(data + 'reply', function (data) {
                 socket.emit('reply', data)
-                console.log('reply')
             })
             users.push(data) // add the user to the list of users and set the name variable to the name of the user
             name = data
@@ -51,7 +50,6 @@ io.on('connection', (socket) => { // when a user connects
             if (users.includes(data['to'][i])) {
                 em.emit(data['to'][i], dataRaw)
             } else {
-                console.log(data)
                 socket.emit('msgStatus', JSON.stringify({ id: data.id, status: 404, user: data.to[i]}))
             }
         }
@@ -67,11 +65,10 @@ io.on('connection', (socket) => { // when a user connects
         id++
     })
 
-    socket.on('reply', (dataRaw) => {
+    socket.on('reply', (dataRaw) => { // when a reply message is recieved
         let data = JSON.parse(dataRaw)
-        console.log(data)
         
-        for (let i = 0; i < data['users'].length; i++) {
+        for (let i = 0; i < data['users'].length; i++) { // for all the recipients send it to each one
             if (users.includes(data['users'][i])) {
                 em.emit(data['users'][i] + 'reply', dataRaw)
             } else {

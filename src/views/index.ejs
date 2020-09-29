@@ -11,7 +11,7 @@
 </head>
 <body class="bg-green-200 bg-green-1000 overflow-hidden">
 
-    <div id="backdrop" class="bg-black z-40 opacity-50 fixed bottom-0 right-0 transition-opacity duration-500"></div>
+    <div id="backdrop" class="bg-black z-40 opacity-50 fixed bottom-0 right-0 transition-opacity duration-500 h-screen w-screen"></div>
 
     <div id='letters' class="overflow-auto h-full relative z-10">
         <p>No letters</p>
@@ -24,7 +24,7 @@
     </div>
 
     <div id="namePrompt" class="modal z-50">
-        <input class="text_input" id="name" name="name" placeholder="Name" class="w-full mt-8">
+        <input class="text_input w-full my-6 box-border mx-0 " id="name" name="name" placeholder="Name">
         <br>
         <button id="submit" name="submit">Submit</button>
     </div>
@@ -53,7 +53,7 @@
         </div>
     </div>
 
-    <p id="msgStatus" class="fixed z-50 bottom-0 left-0"></p>
+    <p id="msgStatus" class="transition-all duration-500 fixed z-50 bottom-0 left-0"></p>
     <img class="w-8 fixed top-0 right-0 m-2" style="z-index: 60" alt="black lives matter lgbtq pride symbol" src="blm-pride.png">
 
     <script src="main.js"></script>

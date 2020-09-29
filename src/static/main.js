@@ -35,7 +35,7 @@ function formatName(name) {
 }
 
 function unformatName(name) {
-    // craee a function that capitalizes the first letter of every word
+    // create a function that capitalizes the first letter of every word
     var names = name.split(" ");
     for (var _i = 0; _i < names.length; _i++) {
         names[_i] = names[_i][0].toUpperCase() + names[_i].substring(1, names[_i].length);
@@ -88,17 +88,17 @@ function display() {
 }
 
 function closeReadLetter() {
-    backdrop.style.opacity = "0";
-    setTimeout(function () {
-        document.getElementById('readLetter').style.transform = "translateY(95vh)";
-        setTimeout(function () {
-            backdrop.style.zIndex = '0';
+    backdrop.style.opacity = "0"; // make the backdrop disappear
+    setTimeout(function () { // after 500 milliseconds
+        document.getElementById('readLetter').style.transform = "translateY(95vh)"; // move the gui down
+        setTimeout(function () { // after 500 milliseconds
+            backdrop.style.zIndex = '0'; // make the backdrop go behind everything so it doesn't block anything
         }, 500);
     }, 500);
 }
 
 function closeNewLetter() {
-    backdrop.style.opacity = "0";
+    backdrop.style.opacity = "0"; // same as closeReadLetter function
     setTimeout(function () {
         document.getElementById('newLetter').style.transform = "translateY(95vh)";
         setTimeout(function () {
@@ -108,14 +108,14 @@ function closeNewLetter() {
 }
 
 function openReadLetter() {
-    backdrop.style.zIndex = '40';
-    document.getElementById('readLetter').style.transform = "translateY(0vh)";
-    setTimeout(function () {
-        backdrop.style.opacity = "0.5";
+    backdrop.style.zIndex = '40'; // move the backdrop forward
+    document.getElementById('readLetter').style.transform = "translateY(0vh)"; // move the gui up
+    setTimeout(function () { // after 500 milliseconds 
+        backdrop.style.opacity = "0.5"; // make the backdrop appear
     }, 500);
 }
 
-function openNewLetter() {
+function openNewLetter() { // same as openReadLetter function
     backdrop.style.zIndex = '40';
     document.getElementById('newLetter').style.transform = "translateY(0vh)";
     setTimeout(function () {
@@ -123,16 +123,16 @@ function openNewLetter() {
     }, 500);
 }
 
-function badLogin() {
+function badLogin() { // if the login failes
     document.getElementById('name').value = "";
-    if (name.includes('|')) {
-        msgStatus.innerHTML = '❌ Username is unavilable (Please remove all | characters)';
-    } else if (name == '' || name == '') {
-        msgStatus.innerHTML = '❌ Please enter a username';
-    } else {
-        msgStatus.innerHTML = '❌ Username is taken';
+    if (name.includes('|')) { // if the name includes an invalid character
+        msgStatus.innerHTML = '❌ Username is unavilable (Please remove all | characters)'; // set the message
+    } else if (name == '' || name == '') { // if the name was empty
+        msgStatus.innerHTML = '❌ Please enter a username'; // set the message
+    } else { // otherwise
+        msgStatus.innerHTML = '❌ Username is taken'; // set the message
     }
-    currentStatus = 400;
+    currentStatus = 400; // set the message status
     msgStatus.style.opacity = '1'; // reveal the message status element
     setTimeout(function () {
         // after 3 seconds reset the html element and the current status variable
@@ -145,17 +145,17 @@ function submitName() {
     // when you submit your name
     var socket = io.connect(window.location.href); // start the socket connection
     name = formatName(document.getElementById('name').value);
-    if (name != "") {
-        socket.emit('login', name);
+    if (name != "") { // if the name isn't empty
+        socket.emit('login', name); // send a login message
 
-        socket.on('goodlogin', function () {
+        socket.on('goodlogin', function () { // if the message was recieved
 
-            backdrop.style.opacity = "0";
-            setTimeout(function () {
-                document.getElementById("namePrompt").style.opacity = "0";
-                setTimeout(function () {
+            backdrop.style.opacity = "0"; // make the backdrop disappear
+            setTimeout(function () { // after 500 milliseconds
+                document.getElementById("namePrompt").style.opacity = "0"; // make the name prompt disappear
+                setTimeout(function () { // after 500 millisenconds move the backdrop backward
                     backdrop.style.zIndex = '0';
-                }, 500);
+                }, 500); 
             }, 500);
 
             document.getElementById("detector").addEventListener("click", function () {
@@ -400,12 +400,7 @@ function submitName() {
     }
 }
 
-backdrop.style.width = window.innerWidth.toString() + 'px';
-backdrop.style.height = window.innerHeight.toString() + 'px';
-
-document.getElementById("to");
-
-document.getElementById("submit").addEventListener("click", submitName);
-document.getElementById("name").addEventListener("keypress", function (e) {
+document.getElementById("submit").addEventListener("click", submitName); // bind the submit button to the submitName function
+document.getElementById("name").addEventListener("keypress", function (e) { // bind the enter key to the submitName function
     if (e.code == 'Enter') submitName();
 });
